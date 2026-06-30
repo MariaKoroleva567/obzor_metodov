@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Анализ влияния человеческого фактора — психосоциальные и психофизические перегрузки</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    background: #3a4647;
+    font-family: -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .frame {
+    width: 100vw; max-width: 100vw;
+    height: 500px; max-height: 500px;
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .swiper { width: 100%; height: 100%; }
+  .swiper-slide { overflow: hidden; display: flex; align-items: center; justify-content: center; }
+
+  /* ===== SLIDE ===== */
+  .slide {
+    width: 560px; height: 500px;
+    position: relative;
+    display: flex; flex-direction: column;
+    transform-origin: center center;
+    overflow: hidden;
+  }
+
+  .slide-accent-top {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 5px;
+  }
+  .slide-accent-left {
+    position: absolute; top: 0; left: 0;
+    width: 5px; height: 100%;
+  }
+
+  /* ===== 4 THEMES ===== */
+
+  /* M: Warm cream + deep teal (base) */
+  .theme-m { background: #EDE9E3; }
+  .theme-m .slide-accent-top, .theme-m .slide-accent-left { background: #3a6b6d; }
+  .theme-m .slide-num { color: #3a6b6d; }
+  .theme-m .slide-title { color: #2a3536; }
+  .theme-m .slide-divider { background: #3a6b6d; }
+  .theme-m .slide-body p { color: #4a5556; }
+  .theme-m .slide-body strong { color: #3a6b6d; }
+  .theme-m .slide-body ul li { color: #4a5556; }
+  .theme-m .slide-body ul li::marker { color: #3a6b6d; }
+  .theme-m .slide-tag { background: rgba(58,107,109,0.1); color: #3a6b6d; }
+  .theme-m .slide-result { background: rgba(58,107,109,0.07); border-left-color: #3a6b6d; }
+  .theme-m .slide-result-label { color: #3a6b6d; }
+  .theme-m .slide-result-text { color: #5a6869; }
+  .theme-m .slide-footer { background: #ddd9d3; }
+  .theme-m .slide-footer span { color: #9aa5a6; }
+
+  /* N: Dark teal + coral */
+  .theme-n { background: #3e5253; }
+  .theme-n .slide-accent-top, .theme-n .slide-accent-left { background: #E8825F; }
+  .theme-n .slide-num { color: #E8825F; }
+  .theme-n .slide-title { color: #ffffff; }
+  .theme-n .slide-divider { background: #E8825F; }
+  .theme-n .slide-body p { color: #cdd7d8; }
+  .theme-n .slide-body strong { color: #E8825F; }
+  .theme-n .slide-body ul li { color: #cdd7d8; }
+  .theme-n .slide-body ul li::marker { color: #E8825F; }
+  .theme-n .slide-tag { background: rgba(232,130,95,0.12); color: #E8825F; }
+  .theme-n .slide-result { background: rgba(232,130,95,0.1); border-left-color: #E8825F; }
+  .theme-n .slide-result-label { color: #E8825F; }
+  .theme-n .slide-result-text { color: #b8c6c7; }
+  .theme-n .slide-footer { background: #2e4243; }
+  .theme-n .slide-footer span { color: #6e8080; }
+
+  /* O: Deep teal + gold */
+  .theme-o { background: #3a5253; }
+  .theme-o .slide-accent-top, .theme-o .slide-accent-left { background: #FEC73D; }
+  .theme-o .slide-num { color: #FEC73D; }
+  .theme-o .slide-title { color: #ffffff; }
+  .theme-o .slide-divider { background: #FEC73D; }
+  .theme-o .slide-body p { color: #cdd7d8; }
+  .theme-o .slide-body strong { color: #FEC73D; }
+  .theme-o .slide-body ul li { color: #cdd7d8; }
+  .theme-o .slide-body ul li::marker { color: #FEC73D; }
+  .theme-o .slide-tag { background: rgba(254,199,61,0.1); color: #FEC73D; }
+  .theme-o .slide-result { background: rgba(254,199,61,0.08); border-left-color: #FEC73D; }
+  .theme-o .slide-result-label { color: #FEC73D; }
+  .theme-o .slide-result-text { color: #b8c6c7; }
+  .theme-o .slide-footer { background: #2d4243; }
+  .theme-o .slide-footer span { color: #6e8080; }
+
+  /* P: Cool gray + teal */
+  .theme-p { background: #E8ECEC; }
+  .theme-p .slide-accent-top, .theme-p .slide-accent-left { background: #5a8587; }
+  .theme-p .slide-num { color: #5a8587; }
+  .theme-p .slide-title { color: #2a3536; }
+  .theme-p .slide-divider { background: #5a8587; }
+  .theme-p .slide-body p { color: #4a5556; }
+  .theme-p .slide-body strong { color: #5a8587; }
+  .theme-p .slide-body ul li { color: #4a5556; }
+  .theme-p .slide-body ul li::marker { color: #5a8587; }
+  .theme-p .slide-tag { background: rgba(90,133,135,0.1); color: #5a8587; }
+  .theme-p .slide-result { background: rgba(90,133,135,0.07); border-left-color: #5a8587; }
+  .theme-p .slide-result-label { color: #5a8587; }
+  .theme-p .slide-result-text { color: #5a6869; }
+  .theme-p .slide-footer { background: #d8dcdc; }
+  .theme-p .slide-footer span { color: #8a9a9b; }
+
+  /* ===== CONTENT ===== */
+  .slide-header {
+    padding: 24px 30px 0 26px;
+    flex-shrink: 0;
+  }
+  .slide-num {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 5px;
+  }
+  .slide-title {
+    font-size: 20px; font-weight: 800;
+    line-height: 1.2;
+    max-width: 470px;
+  }
+  .slide-divider {
+    width: 44px; height: 3px;
+    border: none;
+    margin: 12px 0 10px 26px; flex-shrink: 0;
+  }
+
+  .slide-body {
+    padding: 0 30px 0 26px;
+    flex: 1; overflow: hidden;
+  }
+  .slide-body p {
+    font-size: 13px; line-height: 1.52;
+    margin-bottom: 8px;
+  }
+  .slide-body p:last-child { margin-bottom: 0; }
+  .slide-body strong { font-weight: 600; }
+
+  /* lists */
+  .slide-body ul {
+    font-size: 13px; line-height: 1.52;
+    margin: 0 0 8px 18px; padding: 0;
+  }
+  .slide-body ul:last-child { margin-bottom: 0; }
+  .slide-body ul li {
+    margin-bottom: 4px;
+    padding-left: 2px;
+  }
+
+  /* tag pills for categories */
+  .slide-tag {
+    display: inline-block;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 3px;
+    margin-right: 5px; margin-bottom: 4px;
+  }
+
+  .slide-result {
+    margin: 0 30px 12px 26px;
+    padding: 9px 13px;
+    border-left: 3px solid;
+    flex-shrink: 0;
+  }
+  .slide-result-label {
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 2px;
+  }
+  .slide-result-text {
+    font-size: 12px; line-height: 1.42;
+  }
+
+  .slide-footer {
+    height: 16px;
+    flex-shrink: 0;
+    display: flex; align-items: center;
+    justify-content: space-between;
+    padding: 0 26px;
+  }
+  .slide-footer span {
+    font-size: 8px;
+    letter-spacing: 0.4px;
+  }
+
+  /* ===== NAVIGATION ===== */
+  .nav-side {
+    position: absolute; top: 50%;
+    transform: translateY(-50%);
+    z-index: 20;
+    width: 32px; height: 56px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .nav-side-left { left: 6px; }
+  .nav-side-right { right: 6px; }
+
+  .nav-arrow {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.35);
+    background: rgba(58,70,71,0.6);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; color: rgba(255,255,255,0.7);
+    transition: all 0.2s;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  .nav-arrow:hover {
+    background: rgba(254,199,61,0.85);
+    border-color: #FEC73D;
+    color: #3a4647;
+  }
+
+  .nav-counter {
+    position: absolute; top: 10px; right: 14px;
+    z-index: 20;
+    font-size: 11px; font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.5px;
+  }
+
+  .progress-bar {
+    position: absolute; bottom: 0; left: 0;
+    height: 3px; background: #FEC73D;
+    z-index: 20; transition: width 0.3s;
+  }
+</style>
+</head>
+<body>
+
+<div class="frame" id="frame">
+  <div class="swiper" id="swiper">
+    <div class="swiper-wrapper">
+
+      <!-- ========== SLIDE 1: Титульный ========== -->
+      <div class="swiper-slide">
+        <div class="slide theme-n">
+          <div class="slide-accent-top"></div>
+          <div class="slide-accent-left"></div>
+          <div class="slide-header">
+            <div class="slide-num">Метод 11 — подробно</div>
+            <div class="slide-title">Анализ влияния человеческого фактора на надёжность системы</div>
+          </div>
+          <hr class="slide-divider">
+          <div class="slide-body">
+            <p>Метод оценивает влияние действий работника на работу рассматриваемой системы — в том числе <strong>ошибок, вызванных перегрузками</strong>. Позволяет идентифицировать ошибки и их причины, чтобы снизить количество ошибок и тяжесть последствий.</p>
+            <p><strong>Адаптация:</strong> исходный метод (ГОСТ Р МЭК 62508‑2014, ГОСТ Р 58771‑2019) сфокусирован на операторских ошибках при управлении оборудованием. Мы переносим тот же инструментарий на <strong>психосоциальные и психофизические перегрузки</strong> — стресс, выгорание, когнитивную усталость, конфликтность.</p>
+            <p>Область применения: конкретное рабочее место или процесс, среднесрочный и долгосрочный диапазон, операционный и тактический уровень решений.</p>
+          </div>
+          <div class="slide-result">
+            <div class="slide-result-label">Нормативная база</div>
+            <div class="slide-result-text">ГОСТ Р МЭК 62508‑2014 · ГОСТ Р 58771‑2019 (Б.5.8) · ГОСТ Р 51901.1‑2002 · Приказ Минтруда № 926, п. 73–75 · Приложение № 5 «Стрессы на работе»</div>
+          </div>
+          <div class="slide-footer">
+            <span>Приказ Минтруда № 926</span>
+            <span>п. 73–75, прил. 5</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== SLIDE 2: Факторы перегрузок ========== -->
+      <div class="swiper-slide">
+        <div class="slide theme-m">
+          <div class="slide-accent-top"></div>
+          <div class="slide-accent-left"></div>
+          <div class="slide-header">
+            <div class="slide-num">Шаг 1</div>
+            <div class="slide-title">Классификация факторов перегрузок</div>
+          </div>
+          <hr class="slide-divider">
+          <div class="slide-body">
+            <p><span class="slide-tag">Психосоциальные</span>обусловлены организацией труда и социальным окружением:</p>
+            <ul>
+              <li>жёсткие дедлайны, быстрый темп, большой объём работы</li>
+              <li>ненормированный рабочий день, отсутствие автономии</li>
+              <li>социальная изоляция, конфликты, агрессия, буллинг</li>
+              <li>недостаток поддержки руководства и обратной связи</li>
+            </ul>
+            <p><span class="slide-tag">Психофизические</span>связаны с нагрузкой на организм:</p>
+            <ul>
+              <li>монотонность, гиподинамия, сенсорная депривация</li>
+              <li>информационная перегрузка, длительная концентрация внимания</li>
+              <li>сменная работа, нарушение циркадных ритмов</li>
+              <li>физическое истощение при тяжёлом труде</li>
+            </ul>
+          </div>
+          <div class="slide-result">
+            <div class="slide-result-label">Результат шага</div>
+            <div class="slide-result-text">Реестр факторов перегрузок по каждому рабочему месту с отметкой: психосоциальный / психофизический / комбинированный</div>
+          </div>
+          <div class="slide-footer">
+            <span>Приказ Минтруда № 926</span>
+            <span>прил. 5, пп. 73–75</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== SLIDE 3: Типы ошибок ========== -->
+      <div class="swiper-slide">
+        <div class="slide theme-o">
+          <div class="slide-accent-top"></div>
+          <div class="slide-accent-left"></div>
+          <div class="slide-header">
+            <div class="slide-num">Шаг 2</div>
+            <div class="slide-title">Типы ошибок человека при перегрузках</div>
+          </div>
+          <hr class="slide-divider">
+          <div class="slide-body">
+            <p><strong>Ошибки по невниманию</strong> — пропуск сигнала, перепутанный тумблер. Возникают при монотонности, сенсорной депривации, усталости. Работник знает правильное действие, но не выполняет его.</p>
+            <p><strong>Ошибки по памяти</strong> — забыл шаг алгоритма, не вспомнил инструкцию. Провоцируются информационной перегрузкой и стрессом, которые снижают рабочую память.</p>
+            <p><strong>Ошибки по решению</strong> — выбран неверный план действий при нештатной ситуации. Вызваны дефицитом времени, когнитивной перегрузкой, отсутствием автономии.</p>
+            <p><strong>Нарушения (умышленные)</strong> — отступление от правил ради экономии времени. Часто следствие хронического стресса, выгорания, конфликтов с руководством.</p>
+          </div>
+          <div class="slide-result">
+            <div class="slide-result-label">Результат шага</div>
+            <div class="slide-result-text">Карта ошибок: для каждого рабочего места — доминирующий тип ошибки и связанный с ней фактор перегрузки</div>
+          </div>
+          <div class="slide-footer">
+            <span>Приказ Минтруда № 926</span>
+            <span>п. 73</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== SLIDE 4: Оценка вероятности ========== -->
+      <div class="swiper-slide">
+        <div class="slide theme-n">
+          <div class="slide-accent-top"></div>
+          <div class="slide-accent-left"></div>
+          <div class="slide-header">
+            <div class="slide-num">Шаг 3</div>
+            <div class="slide-title">Оценка вероятности ошибки</div>
+          </div>
+          <hr class="slide-divider">
+          <div class="slide-body">
+            <p>Для каждого выявленного типа ошибки оценивается вероятность её совершения с учётом перегрузок. Используется модифицированная шкала из ГОСТ Р МЭК 62508:</p>
+            <ul>
+              <li><strong>Очень низкая (1)</strong> — ошибка практически исключена, перегрузки отсутствуют</li>
+              <li><strong>Низкая (2)</strong> — ошибка маловероятна, эпизодический стресс</li>
+              <li><strong>Средняя (3)</strong> — ошибка возможна, периодические перегрузки</li>
+              <li><strong>Высокая (5)</strong> — ошибка вероятна, хронический стресс или выгорание</li>
+              <li><strong>Очень высокая (7)</strong> — ошибка почти неизбежна, критическая перегрузка</li>
+            </ul>
+            <p>Корректирующие множители: время суток (ночная смена ×1.3), стаж (&lt;1 года ×1.2), отсутствие поддержки ×1.4, конфликтная среда ×1.3.</p>
+          </div>
+          <div class="slide-result">
+            <div class="slide-result-label">Результат шага</div>
+            <div class="slide-result-text">Базовая вероятность ошибки + корректирующий множитель = итоговая вероятность для каждого типа ошибки на рабочем месте</div>
+          </div>
+          <div class="slide-footer">
+            <span>Приказ Минтруда № 926</span>
+            <span>прил. 13, ГОСТ Р МЭК 62508</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== SLIDE 5: Оценка последствий ========== -->
+      <div class="swiper-slide">
+        <div class="slide theme-p">
+          <div class="slide-accent-top"></div>
+          <div class="slide-accent-left"></div>
+          <div class="slide-header">
+            <div class="slide-num">Шаг 4</div>
+            <div class="slide-title">Оценка тяжести последствий</div>
+          </div>
+          <hr class="slide-divider">
+          <div class="slide-body">
+            <p>Последствия ошибки классифицируются по шкале тяжести из Приложения № 13 к Рекомендациям, с адаптацией под психологический ущерб:</p>
+            <ul>
+              <li><strong>Незначительный (1)</strong> — микротравма, дискомфорт, кратковременный стресс</li>
+              <li><strong>Малый (5)</strong> — незначительное воздействие на здоровье, восстановление за 1–3 дня</li>
+              <li><strong>Средний (10)</strong> — неблагоприятное воздействие, временная нетрудоспособность до 30 дней, начальные признаки профессионального заболевания</li>
+              <li><strong>Большой (13)</strong> — значительная утрата трудоспособности, длительное расстройство 30–60 дней</li>
+              <li><strong>Очень большой (15)</strong> — смертельный случай, хроническое заболевание, стойкая утрата трудоспособности</li>
+            </ul>
+          </div>
+          <div class="slide-result">
+            <div class="slide-result-label">Результат шага</div>
+            <div class="slide-result-text">Значение тяжести последствий для каждого типа ошибки, включая психологический и психосоматический ущерб</div>
+          </div>
+          <div class="slide-footer">
+            <span>Приказ Минтруда № 926</span>
+            <span>прил. 13</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== SLIDE 6: Расчёт уровня риска ========== -->
+      <div class="swiper-slide">
+        <div class="slide theme-o">
+          <div class="slide-accent-top"></div>
+          <div class="slide-accent-left"></div>
+          <div class="slide-header">
+            <div class="slide-num">Шаг 5</div>
+            <div class="slide-title">Расчёт уровня риска</div>
+          </div>
+          <hr class="slide-divider">
+          <div class="slide-body">
+            <p>Уровень риска = <strong>Вероятность × Тяжесть</strong>. Результат сравнивается с порогами из Приложения № 13:</p>
+            <ul>
+              <li><strong>Низкий</strong> — риск удовлетворительный, дополнительные меры не требуются, поддерживайте текущий уровень</li>
+              <li><strong>Умеренный</strong> — запланируйте мероприятия по снижению, установите сроки выполнения</li>
+              <li><strong>Высокий</strong> — риск недопустим: немедленное устранение или приостановка работ до снижения</li>
+            </ul>
+            <p>При <strong>комбинированных перегрузках</strong> (психосоциальная + психофизическая) вероятность ошибки суммарно выше, чем по каждому фактору отдельно. Рекомендуется применять поправочный коэффициент ×1.2 для учёта взаимного усиления.</p>
+          </div>
+          <div class="slide-result">
+            <div class="slide-result-label">Результат шага</div>
+            <div class="slide-result-text">Числовое значение риска по каждой ошибке; категория (низкий / умеренный / высокий); поправка за комбинированные перегрузки</div>
+          </div>
+          <div class="slide-footer">
+            <span>Приказ Минтруда № 926</span>
+            <span>прил. 13, табл. 13.3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== SLIDE 7: Мероприятия ========== -->
+      <div class="swiper-slide">
+        <div class="slide theme-m">
+          <div class="slide-accent-top"></div>
+          <div class="slide-accent-left"></div>
+          <div class="slide-header">
+            <div class="slide-num">Шаг 6</div>
+            <div class="slide-title">Мероприятия по снижению риска</div>
+          </div>
+          <hr class="slide-divider">
+          <div class="slide-body">
+            <p><span class="slide-tag">Организационные</span></p>
+            <ul>
+              <li>исключить «пиковые» перегрузки, сбалансировать рабочую нагрузку</li>
+              <li>заблаговременно информировать о напряжённых периодах</li>
+              <li>предоставить автономию: гибкий график, участие в планировании</li>
+              <li>внедрить наставничество и регулярную обратную связь</li>
+            </ul>
+            <p><span class="slide-tag">Социальные</span></p>
+            <ul>
+              <li>развивать способы разрешения конфликтов, политику противодействия агрессии</li>
+              <li>избегать работы в одиночку, содействовать командному взаимодействию</li>
+              <li>обучать руководителей навыкам поддержки и коммуникации</li>
+            </ul>
+            <p><span class="slide-tag">Медицинские</span>регулярные проверки психологического состояния в периоды повышенной нагрузки.</p>
+          </div>
+          <div class="slide-result">
+            <div class="slide-result-label">Результат шага</div>
+            <div class="slide-result-text">План мероприятий по управлению рисками (прил. 16) с указанием меры, источника финансирования, срока и ответственного</div>
+          </div>
+          <div class="slide-footer">
+            <span>Приказ Минтруда № 926</span>
+            <span>п. 87–93, прил. 5, 16</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== SLIDE 8: Документирование ========== -->
+      <div class="swiper-slide">
+        <div class="slide theme-n">
+          <div class="slide-accent-top"></div>
+          <div class="slide-accent-left"></div>
+          <div class="slide-header">
+            <div class="slide-num">Итог</div>
+            <div class="slide-title">Документирование и интеграция</div>
+          </div>
+          <hr class="slide-divider">
+          <div class="slide-body">
+            <p>Результаты оценки фиксируются в <strong>перечне (реестре) рисков</strong>, ранжированном по уровню, и в <strong>плане управления рисками</strong> (прил. 16). Для каждой ошибки указаны:</p>
+            <ul>
+              <li>фактор перегрузки (психосоциальный / психофизический)</li>
+              <li>тип ошибки (невнимание / память / решение / нарушение)</li>
+              <li>вероятность, тяжесть, уровень риска</li>
+              <li>корректирующий множитель и поправка на комбинированные перегрузки</li>
+              <li>запланированное мероприятие, срок, ответственный</li>
+            </ul>
+            <p><strong>Интеграция:</strong> количественные данные об ошибках оператора используются как исходные данные для FMEA, дерева отказов и дерева событий. После реализации мероприятий — <strong>повторная оценка</strong> риска (п. 91–93).</p>
+          </div>
+          <div class="slide-result">
+            <div class="slide-result-label">Итоговый документ</div>
+            <div class="slide-result-text">Реестр рисков + план мероприятий + протокол повторной оценки. Обоснование для СОУТ, обеспечения СИЗ и управленческих решений по ограничению перегрузок</div>
+          </div>
+          <div class="slide-footer">
+            <span>Приказ Минтруда № 926</span>
+            <span>п. 74, 87–93, прил. 16</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /swiper-wrapper -->
+  </div><!-- /swiper -->
+
+  <!-- Navigation -->
+  <div class="nav-side nav-side-left" id="prevBtn">
+    <div class="nav-arrow">&#8249;</div>
+  </div>
+  <div class="nav-side nav-side-right" id="nextBtn">
+    <div class="nav-arrow">&#8250;</div>
+  </div>
+
+  <div class="nav-counter" id="counter">1 / 8</div>
+
+  <div class="progress-bar" id="progressBar" style="width:12.5%"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+(function(){
+  const swiper = new Swiper('#swiper', {
+    direction: 'horizontal',
+    slidesPerView: 1,
+    speed: 350,
+    on: { slideChange: updateUI }
+  });
+
+  document.getElementById('prevBtn').addEventListener('click', ()=> swiper.slidePrev());
+  document.getElementById('nextBtn').addEventListener('click', ()=> swiper.slideNext());
+
+  document.addEventListener('keydown', e => {
+    if(e.key==='ArrowRight'||e.key===' ') swiper.slideNext();
+    if(e.key==='ArrowLeft') swiper.slidePrev();
+  });
+
+  function updateUI(){
+    const i = swiper.activeIndex + 1;
+    const total = swiper.slides.length;
+    document.getElementById('counter').textContent = i + ' / ' + total;
+    document.getElementById('progressBar').style.width = (i / total * 100) + '%';
+  }
+
+  function resize(){
+    const frame = document.getElementById('frame');
+    const fw = frame.clientWidth;
+    const fh = frame.clientHeight;
+    const scale = Math.min(fw / 560, fh / 500);
+    const slides = document.querySelectorAll('.slide');
+    slides.forEach(s => {
+      s.style.transform = 'scale(' + scale + ')';
+      s.style.transformOrigin = 'center center';
+    });
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+})();
+</script>
+
+</body>
+</html>
