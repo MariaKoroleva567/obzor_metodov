@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>14 методов оценки рисков — Приказ Минтруда № 926</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#3a4647;font-family:-apple-system,'Segoe UI','Helvetica Neue',Arial,sans-serif}
+.frame{width:100vw;max-width:100vw;height:500px;max-height:500px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.swiper{width:100%;height:100%}
+.swiper-slide{overflow:hidden;display:flex;align-items:center;justify-content:center}
+.slide{width:560px;height:500px;position:relative;display:flex;flex-direction:column;transform-origin:center center;overflow:hidden}
+.slide-accent-top{position:absolute;top:0;left:0;width:100%;height:5px}
+.slide-accent-left{position:absolute;top:0;left:0;width:5px;height:100%}
+
+/* ===== 7 THEMES ===== */
+.th-a{background:#495758}.th-a .slide-accent-top,.th-a .slide-accent-left{background:#FEC73D}
+.th-a .s-num{color:#FEC73D}.th-a .s-title{color:#fff}.th-a .s-divider{background:#FEC73D}
+.th-a .s-body p,.th-a .s-body li{color:#d4dcdd}.th-a .s-body strong{color:#FEC73D}.th-a .s-body li::marker{color:#FEC73D}
+.th-a .s-tag{background:rgba(254,199,61,0.1);color:#FEC73D}
+.th-a .s-result{background:rgba(254,199,61,0.08);border-left-color:#FEC73D}.th-a .s-result-label{color:#FEC73D}.th-a .s-result-text{color:#c4cecf}
+.th-a .s-footer{background:#3a4647}.th-a .s-footer span{color:#6e7f80}
+
+.th-b{background:#F4F4F2}.th-b .slide-accent-top,.th-b .slide-accent-left{background:#495758}
+.th-b .s-num{color:#495758}.th-b .s-title{color:#2a3536}.th-b .s-divider{background:#495758}
+.th-b .s-body p,.th-b .s-body li{color:#4a5556}.th-b .s-body strong{color:#495758}.th-b .s-body li::marker{color:#495758}
+.th-b .s-tag{background:rgba(73,87,88,0.1);color:#495758}
+.th-b .s-result{background:rgba(73,87,88,0.07);border-left-color:#495758}.th-b .s-result-label{color:#495758}.th-b .s-result-text{color:#5a6869}
+.th-b .s-footer{background:#e4e4e2}.th-b .s-footer span{color:#9aa5a6}
+
+.th-c{background:#3e4445}.th-c .slide-accent-top,.th-c .slide-accent-left{background:#E8825F}
+.th-c .s-num{color:#E8825F}.th-c .s-title{color:#fff}.th-c .s-divider{background:#E8825F}
+.th-c .s-body p,.th-c .s-body li{color:#d4d8d8}.th-c .s-body strong{color:#E8825F}.th-c .s-body li::marker{color:#E8825F}
+.th-c .s-tag{background:rgba(232,130,95,0.12);color:#E8825F}
+.th-c .s-result{background:rgba(232,130,95,0.1);border-left-color:#E8825F}.th-c .s-result-label{color:#E8825F}.th-c .s-result-text{color:#c4caca}
+.th-c .s-footer{background:#2e3435}.th-c .s-footer span{color:#6e7878}
+
+.th-d{background:#EDE9E3}.th-d .slide-accent-top,.th-d .slide-accent-left{background:#3a6b6d}
+.th-d .s-num{color:#3a6b6d}.th-d .s-title{color:#2a3536}.th-d .s-divider{background:#3a6b6d}
+.th-d .s-body p,.th-d .s-body li{color:#4a5556}.th-d .s-body strong{color:#3a6b6d}.th-d .s-body li::marker{color:#3a6b6d}
+.th-d .s-tag{background:rgba(58,107,109,0.1);color:#3a6b6d}
+.th-d .s-result{background:rgba(58,107,109,0.07);border-left-color:#3a6b6d}.th-d .s-result-label{color:#3a6b6d}.th-d .s-result-text{color:#5a6869}
+.th-d .s-footer{background:#ddd9d3}.th-d .s-footer span{color:#9aa5a6}
+
+.th-e{background:#3a5253}.th-e .slide-accent-top,.th-e .slide-accent-left{background:#FEC73D}
+.th-e .s-num{color:#FEC73D}.th-e .s-title{color:#fff}.th-e .s-divider{background:#FEC73D}
+.th-e .s-body p,.th-e .s-body li{color:#cdd7d8}.th-e .s-body strong{color:#FEC73D}.th-e .s-body li::marker{color:#FEC73D}
+.th-e .s-tag{background:rgba(254,199,61,0.1);color:#FEC73D}
+.th-e .s-result{background:rgba(254,199,61,0.08);border-left-color:#FEC73D}.th-e .s-result-label{color:#FEC73D}.th-e .s-result-text{color:#b8c6c7}
+.th-e .s-footer{background:#2d4243}.th-e .s-footer span{color:#6e8080}
+
+.th-f{background:#4a5668}.th-f .slide-accent-top,.th-f .slide-accent-left{background:#D4A853}
+.th-f .s-num{color:#D4A853}.th-f .s-title{color:#fff}.th-f .s-divider{background:#D4A853}
+.th-f .s-body p,.th-f .s-body li{color:#cdd3dc}.th-f .s-body strong{color:#D4A853}.th-f .s-body li::marker{color:#D4A853}
+.th-f .s-tag{background:rgba(212,168,83,0.12);color:#D4A853}
+.th-f .s-result{background:rgba(212,168,83,0.1);border-left-color:#D4A853}.th-f .s-result-label{color:#D4A853}.th-f .s-result-text{color:#b8c2ce}
+.th-f .s-footer{background:#3a4555}.th-f .s-footer span{color:#7a8696}
+
+.th-g{background:#E8ECEC}.th-g .slide-accent-top,.th-g .slide-accent-left{background:#5a8587}
+.th-g .s-num{color:#5a8587}.th-g .s-title{color:#2a3536}.th-g .s-divider{background:#5a8587}
+.th-g .s-body p,.th-g .s-body li{color:#4a5556}.th-g .s-body strong{color:#5a8587}.th-g .s-body li::marker{color:#5a8587}
+.th-g .s-tag{background:rgba(90,133,135,0.1);color:#5a8587}
+.th-g .s-result{background:rgba(90,133,135,0.07);border-left-color:#5a8587}.th-g .s-result-label{color:#5a8587}.th-g .s-result-text{color:#5a6869}
+.th-g .s-footer{background:#d8dcdc}.th-g .s-footer span{color:#8a9a9b}
+
+/* ===== CONTENT ===== */
+.s-header{padding:22px 28px 0 24px;flex-shrink:0}
+.s-num{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.s-title{font-size:18px;font-weight:800;line-height:1.22;max-width:470px}
+.s-divider{width:44px;height:3px;border:none;margin:10px 0 9px 24px;flex-shrink:0}
+.s-body{padding:0 28px 0 24px;flex:1;overflow:hidden}
+.s-body p{font-size:12.5px;line-height:1.48;margin-bottom:7px}
+.s-body p:last-child{margin-bottom:0}
+.s-body strong{font-weight:600}
+.s-body ul{font-size:12.5px;line-height:1.48;margin:0 0 7px 16px;padding:0}
+.s-body ul:last-child{margin-bottom:0}
+.s-body li{margin-bottom:3px;padding-left:2px}
+.s-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-right:4px;margin-bottom:3px}
+.s-gost{font-size:10px;line-height:1.4;opacity:.65;margin-top:5px;padding:4px 8px;border-radius:3px}
+.th-a .s-gost,.th-c .s-gost,.th-e .s-gost,.th-f .s-gost{background:rgba(255,255,255,0.06);color:#a0b0b0}
+.th-b .s-gost,.th-d .s-gost,.th-g .s-gost{background:rgba(0,0,0,0.04);color:#7a8a8b}
+.s-result{margin:0 28px 10px 24px;padding:8px 12px;border-left:3px solid;flex-shrink:0}
+.s-result-label{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px}
+.s-result-text{font-size:11.5px;line-height:1.4}
+.s-footer{height:15px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+.s-footer span{font-size:7px;letter-spacing:.4px}
+
+.nav-side{position:absolute;top:50%;transform:translateY(-50%);z-index:20;width:32px;height:56px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.nav-side-left{left:6px}.nav-side-right{right:6px}
+.nav-arrow{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,0.35);background:rgba(58,70,71,0.6);display:flex;align-items:center;justify-content:center;font-size:15px;color:rgba(255,255,255,0.7);transition:all .2s;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.nav-arrow:hover{background:rgba(254,199,61,0.85);border-color:#FEC73D;color:#3a4647}
+.nav-counter{position:absolute;top:10px;right:14px;z-index:20;font-size:11px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:.5px}
+.progress-bar{position:absolute;bottom:0;left:0;height:3px;background:#FEC73D;z-index:20;transition:width .3s}
+</style>
+</head>
+<body>
+<div class="frame" id="frame">
+<div class="swiper" id="swiper"><div class="swiper-wrapper">
+
+<!-- 01 Контрольные листы — th-a -->
+<div class="swiper-slide"><div class="slide th-a">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">01 · Малый и микро‑бизнес</div><div class="s-title">Контрольные листы</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Наиболее распространённый метод контроля рисков на малых и микропредприятиях. Список контрольных вопросов составляется на основе ранее полученного опыта и нормативных требований.</p>
+<p>Для разработки: определить процессы → составить перечень требований → направить работникам для заполнения. Списки актуализируются с учётом изменений процессов и нормативных требований. Примеры — в прил. 1–8.</p>
+<p>Не требует значительных временных и финансовых затрат, углублённого обучения не нужно.</p>
+<div class="s-gost">Методология: ГОСТ Р 58771‑2019, технология Б.2.2 — упомянут в ГОСТ, рекомендован Приказом №926</div>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Заполненный список ответов «да/нет» по каждой опасности; выявленные проблемы и предупредительные меры</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 30–34</span></div>
+</div></div>
+
+<!-- 02 Матричный метод — th-b -->
+<div class="swiper-slide"><div class="slide th-b">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">02 · Малый и микро‑бизнес</div><div class="s-title">Матричный метод</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Качественная (экспертная) оценка вероятности и тяжести последствий. Значения сводятся в матрицу — на пересечении строки «тяжесть» и столбца «вероятность» определяется уровень риска: низкий, умеренный, высокий.</p>
+<p>Два варианта: <strong>простой матричный метод</strong> (п. 35–37) — пятишаговая последовательность для микропредприятий; <strong>матричный метод на основе балльной оценки</strong> (п. 38–40) — вероятность и тяжесть имеют весовые коэффициенты, уровень риска = произведение баллов.</p>
+<p>Не требует значительных затрат. Примеры матриц «3×5» и «5×5» — в прил. 9–15.</p>
+<div class="s-gost">Методология балльной оценки: ГОСТ Р 58771‑2019, технология Б.9.3 — упомянута в ГОСТ, рекомендована Приказом №926</div>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Матрица с цветовой градацией (зелёный/жёлтый/красный) + реестр опасностей с оценённым уровнем каждой</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 35–40</span></div>
+</div></div>
+
+<!-- 03 Галстук-бабочка — th-c -->
+<div class="swiper-slide"><div class="slide th-c">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">03 · Наиболее распространённый</div><div class="s-title">Анализ «Галстук‑бабочка»</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Диаграмма описывает путь развития опасного события: от причин — через центральное событие — к последствиям. Между ними указываются <strong>барьеры</strong> (меры управления и контроля).</p>
+<p>Пошаговый: определить событие → перечень причин → механизм развития → барьеры слева → последствия → барьеры справа → вспомогательные функции управления. Выполняется группой специалистов с привлечением работников и службы охраны труда.</p>
+<p>Не требует значительных затрат.</p>
+<div class="s-gost">Методология: ГОСТ Р 58771‑2019, технология Б.4.2 — упомянут в ГОСТ, рекомендован Приказом №926</div>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Диаграмма‑бабочка: причины и барьеры слева, опасное событие в центре, последствия и барьеры справа</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 41–45</span></div>
+</div></div>
+
+<!-- 04 Причинно-следственные связи — th-d -->
+<div class="swiper-slide"><div class="slide th-d">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">04 · Производственные процессы</div><div class="s-title">Анализ причинно‑следственных связей</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Идентифицирует фактические причины нежелательных событий. Информация представляется в виде <strong>диаграммы «рыбьего скелета»</strong> (диаграмма Исикавы) или <strong>древовидной схемы</strong>.</p>
+<p>Метод представляет собой <strong>сочетание дерева отказов и дерева событий</strong> — рассматривает как причины, так и последствия. Примечание: дерево отказов (FTA) и дерево событий (ETA) как самостоятельные методы описаны в ГОСТ, но отдельно Приказом №926 не рекомендованы — они входят в состав данного метода.</p>
+<p>Требует значительных временных и финансовых затрат и углублённого обучения.</p>
+<div class="s-gost">Методология: ГОСТ Р 58771‑2019, технология Б.5.7 — упомянут в ГОСТ, рекомендован Приказом №926. FTA (Б.3.1) и ETA (Б.3.2) описаны в ГОСТ, но отдельно Приказом не рекомендованы</div>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Диаграмма Исикавы или древовидная схема: причины → событие → последствия; идентифицированные фактические причины и логические связи</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 46–48</span></div>
+</div></div>
+
+<!-- 05 Сценарии — th-e -->
+<div class="swiper-slide"><div class="slide th-e">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">05 · Производственные процессы</div><div class="s-title">Метод анализа сценариев</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Описывает возможные события в будущем и исследует их значимость. Наборы сценариев — «лучший случай», «худший случай», «ожидаемый случай» — для анализа последствий и вероятности каждого.</p>
+<p>Для эффективного применения нужна группа специалистов с компетенциями по исследуемым явлениям. Не требует значительных затрат, но нужно краткосрочное повышение квалификации.</p>
+<p>Рекомендуется при планировании будущих стратегий и при рассмотрении существующих видов деятельности. Для любого уровня, среднесрочный и краткосрочный диапазон.</p>
+<div class="s-gost">Методология: ГОСТ Р 58771‑2019, технология Б.2.5 — упомянут в ГОСТ, рекомендован Приказом №926</div>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Набор сценариев с оценкой последствий и вероятности; таблица сравнения вариантов</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 49–52</span></div>
+</div></div>
+
+<!-- 06 Дерево решений — th-f -->
+<div class="swiper-slide"><div class="slide th-f">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">06 · Производственные процессы</div><div class="s-title">Метод анализа «дерева решений»</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Древовидное моделирование возможных решений и их последствий. Результаты выражаются в денежной форме или как <strong>наиболее выгодное решение</strong>.</p>
+<p>Последовательно представляет альтернативные варианты с учётом неопределённости. Анализ начинается с исходного события, далее прогнозируется развитие, определяются результаты и решения для управления.</p>
+<p>Не требует значительных затрат. Рекомендуется при выборе наилучшего способа действий в ситуации неопределённости. Для любого уровня и временного диапазона.</p>
+<div class="s-gost">Методология: ГОСТ Р 58771‑2019, технология Б.2.3 — упомянут в ГОСТ, рекомендован Приказом №926</div>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Диаграмма дерева решений с вероятностями и ущербами для каждого исхода; оптимальное решение</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 53–56</span></div>
+</div></div>
+
+<!-- 07 LOPA — th-a -->
+<div class="swiper-slide"><div class="slide th-a">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">07 · Производственные процессы</div><div class="s-title">Анализ уровней защиты (LOPA)</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Основан на выборе пар причин и последствий и выявлении <strong>уровней защиты</strong> (барьеров), которые могут предотвратить причину, приводящую к нежелательному последствию. Для определения адекватности мер проводится расчёт последствий.</p>
+<p>Рекомендуется как <strong>«анализ барьеров»</strong> — оценивает средства и меры управления, а также их эффективность, в том числе для автоматизированных систем.</p>
+<p>Требует значительных финансовых и временных затрат, а также повышения квалификации. Для конкретного оборудования или процесса, любой временной диапазон.</p>
+<div class="s-gost">Методология: ГОСТ Р 58771‑2019, технология Б.4.4; МЭК 61508, МЭК 61511 — упомянуты в ГОСТ, рекомендованы Приказом №926</div>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Карта уровней защиты: перечень барьеров между причиной и последствием; оценка достаточности барьеров</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 57–59</span></div>
+</div></div>
+
+<!-- 08 Техническое обслуживание — th-b -->
+<div class="swiper-slide"><div class="slide th-b">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">08 · Производственные процессы</div><div class="s-title">Техническое обслуживание, направленное на обеспечение надёжности</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Используется для обеспечения эффективного технического обслуживания: применять на этапе <strong>проектирования и разработки</strong>, затем внедрять на этапе производства и технического обслуживания.</p>
+<p>Позволяет установить задачи: мониторинг технического состояния, плановые ремонт и замена, обнаружение отказов, текущее обслуживание. Дополнительно: модернизация оборудования, изменения в эксплуатационных документах, обучение работников.</p>
+<p>В рамках анализа идентифицируются периодичность задач и требуемые ресурсы. Требует значительных затрат и повышения квалификации.</p>
+<div class="s-gost">Методология: ГОСТ Р 58771‑2019, технология Б.8.5; IEC 60300‑3‑11 — упомянуты в ГОСТ, рекомендованы Приказом №926</div>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Перечень задач технического обслуживания с периодичностью и ресурсами; рекомендации по модернизации и обучению</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 60–62</span></div>
+</div></div>
+
+<!-- 09 HACCP — th-c -->
+<div class="swiper-slide"><div class="slide th-c">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">09 · Безопасность продукции</div><div class="s-title">Анализ опасности и критических контрольных точек (HACCP)</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Метод управления риском загрязнения — традиционно в пищевой промышленности. Цель: <strong>минимизация риска через управление в процессе производства</strong>, а не только при контроле качества конечной продукции.</p>
+<p>Пошагово: описание сырья и продукции → определение способа использования → выявление опасностей → определение <strong>критических контрольных точек (ККТ)</strong> → система мониторинга для каждой ККТ → план корректирующих действий.</p>
+<p>Требует временных и финансовых затрат, краткосрочное повышение квалификации.</p>
+<div class="s-gost">Методология: ГОСТ Р 58771‑2019, технология Б.4.3; ГОСТ Р ИСО 22000‑2007 — упомянуты в ГОСТ, рекомендованы Приказом №926</div>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Перечень критических контрольных точек; система мониторинга; план корректирующих действий</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 63–65</span></div>
+</div></div>
+
+<!-- 10 HAZOP — th-g -->
+<div class="swiper-slide"><div class="slide th-g">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">10 · Безопасность продукции</div><div class="s-title">Исследование HAZOP</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Основан на <strong>управляющих словах</strong> («больше», «меньше», «нет» и т.п.), которые помогают выявить отклонения от проектных условий на каждом этапе процесса. Рассматриваются нежелательные результаты и отклонения в целях поиска причин и видов отказа.</p>
+<p>Пошагово: цели и область → ключевые и управляющие слова → группа HAZOP из экспертов и персонала → сбор документации → анализ каждой единицы оборудования → документальное подтверждение отклонений.</p>
+<p>Требует затрат и повышения квалификации. Для конкретного оборудования или процесса, среднесрочный и долгосрочный диапазон.</p>
+<div class="s-gost">Методология: ГОСТ Р 58771‑2019, технология Б.2.4; ГОСТ Р 51901.11‑2005 — упомянуты в ГОСТ, рекомендованы Приказом №926</div>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Протокол HAZOP: отклонения, причины, последствия, существующие меры защиты и рекомендации</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 66–69</span></div>
+</div></div>
+
+<!-- 11 SWIFT — th-d -->
+<div class="swiper-slide"><div class="slide th-d">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">11 · Иной метод</div><div class="s-title">Структурированный метод «Что, если?» (SWIFT)</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Применяется к системам, процессам, процедурам и организациям в целом для изучения последствий изменений и изменённого или созданного риска. Учитываются как <strong>положительные, так и отрицательные результаты</strong>.</p>
+<p>Требует минимальной подготовки команды, не требует дополнительных финансовых и временных затрат. Быстро выявляет основные риски и источники риска.</p>
+<p>Рекомендуется для выявления возможностей улучшения процессов, определения действий, повышающих вероятность успеха, создания реестра рисков и плана снижения с меньшими усилиями.</p>
+<div class="s-gost">Методология: ГОСТ Р 58771‑2019, технология Б.2.6 — упомянут в ГОСТ, рекомендован Приказом №926</div>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Реестр рисков и план их снижения, составленные через структурированный опрос «что, если?»</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 70–71</span></div>
+</div></div>
+
+<!-- 12 HRA — th-f -->
+<div class="swiper-slide"><div class="slide th-f">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">12 · Иной метод</div><div class="s-title">Анализ влияния человеческого фактора (HRA)</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Формализованный способ исследования ошибок оператора при оценке риска для систем, работа которых существенно зависит от действий персонала. Позволяет выявить ошибки, отрицательно влияющие на производительность, и определить способы их устранения.</p>
+<p>Рекомендуется для качественной оценки действий оператора и идентификации возможных ошибок и их причин. Результаты используются как <strong>исходные данные для других методов</strong>.</p>
+<p>Требует значительных временных и финансовых затрат и повышения квалификации.</p>
+<div class="s-gost">Методология: ГОСТ Р МЭК 62508‑2014; ГОСТ Р 58771‑2019, технология Б.5.8; ГОСТ Р 51901.1‑2002 — упомянуты в ГОСТ, рекомендованы Приказом №926</div>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Перечень возможных ошибок оператора с причинами; количественные данные об отказах, связанных с человеческим фактором</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 72–75</span></div>
+</div></div>
+
+<!-- 13 Профзаболевания — th-e -->
+<div class="swiper-slide"><div class="slide th-e">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">13 · Иной метод</div><div class="s-title">Оценка риска получения профессионального заболевания</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Оценка уровня риска получения профзаболевания в зависимости от уровня воздействия вредных и опасных факторов. Данные применяются как обоснование для управленческих решений по ограничению вредного воздействия.</p>
+<p>Осуществляется на основе результатов <strong>специальной оценки условий труда</strong> (ст. 14 ФЗ «О СОУТ»). Дополнительно — метод Р 2.2.1766‑03 (акт Минздрава).</p>
+<p>Важно: результаты не применяются для решения вопросов занятости конкретного работника, отбора персонала или целей, способствующих социальному неравенству.</p>
+<div class="s-gost">Основание: ФЗ «О специальной оценке условий труда»; Р 2.2.1766‑03 Минздрава — рекомендовано Приказом №926</div>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Оценка уровня риска профзаболевания по каждому вредному фактору с привязкой к результатам СОУТ</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 76–77</span></div>
+</div></div>
+
+<!-- 14 Эффективность затрат — th-a -->
+<div class="swiper-slide"><div class="slide th-a">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">14 · Иной метод</div><div class="s-title">Анализ эффективности затрат (анализ «затрат и выгод»)</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Сравнение общих ожидаемых затрат с общими ожидаемыми выгодами для выбора лучшего варианта решения. Определяются прямые и косвенные выгоды и затраты всех заинтересованных сторон.</p>
+<p><strong>Принцип ALARP</strong> — разновидность данного метода (п. 79): разделяет риск на три уровня: недопустимый → <strong>центральная зона ALARP</strong> (удерживать настолько низким, насколько возможно) → незначительный (достаточно мониторинга). ALARP применяется при оценке вреда здоровью и жизни.</p>
+<p>Результат: NPV / IRR / BCR количественно, таблица «затраты‑выгоды» качественно.</p>
+<div class="s-gost">Методология: ГОСТ Р 58771‑2019, технология Б.7.2 — упомянут в ГОСТ, рекомендован Приказом №926. ALARP — часть данного метода, не отдельный метод</div>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">NPV / IRR / BCR по вариантам; для ALARP — категоризация: недопустимый / зона ALARP / незначительный</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 78–86</span></div>
+</div></div>
+
+</div></div>
+<div class="nav-side nav-side-left" id="prevBtn"><div class="nav-arrow">&#8249;</div></div>
+<div class="nav-side nav-side-right" id="nextBtn"><div class="nav-arrow">&#8250;</div></div>
+<div class="nav-counter" id="counter">1 / 14</div>
+<div class="progress-bar" id="progressBar" style="width:7.14%"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+(function(){
+const s=new Swiper('#swiper',{direction:'horizontal',slidesPerView:1,speed:350,on:{slideChange:u}});
+document.getElementById('prevBtn').addEventListener('click',()=>s.slidePrev());
+document.getElementById('nextBtn').addEventListener('click',()=>s.slideNext());
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')s.slideNext();if(e.key==='ArrowLeft')s.slidePrev();});
+function u(){const i=s.activeIndex+1,t=s.slides.length;document.getElementById('counter').textContent=i+' / '+t;document.getElementById('progressBar').style.width=(i/t*100)+'%';}
+function r(){const f=document.getElementById('frame'),fw=f.clientWidth,fh=f.clientHeight,sc=Math.min(fw/560,fh/500);document.querySelectorAll('.slide').forEach(sl=>{sl.style.transform='scale('+sc+')';sl.style.transformOrigin='center center';});}
+window.addEventListener('resize',r);r();
+})();
+</script>
+</body>
+</html>
