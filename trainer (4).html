@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тренажёр: метод → зона</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#3a4647;font-family:-apple-system,'Segoe UI','Helvetica Neue',Arial,sans-serif}
+
+.frame{width:100vw;max-width:100vw;height:500px;max-height:500px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+
+.deck{width:560px;height:500px;position:relative;transform-origin:center center;overflow:hidden}
+
+/* ===== SCREENS ===== */
+.screen{position:absolute;top:0;left:0;width:100%;height:100%;display:none;flex-direction:column;opacity:0;transition:opacity .3s}
+.screen.active{display:flex;opacity:1}
+
+/* ===== THEMES ===== */
+.th-intro{background:#3a5253}
+.th-a{background:#EDE9E3}/* warm cream + teal */
+.th-b{background:#3e5253}/* dark teal + coral */
+.th-c{background:#4a5668}/* slate + amber */
+.th-d{background:#E8ECEC}/* cool gray + mint */
+.th-e{background:#495758}/* dark teal + gold */
+.th-result{background:#3a5253}
+
+/* accent bars */
+.screen::before{content:'';position:absolute;top:0;left:0;width:100%;height:5px}
+.screen::after{content:'';position:absolute;top:0;left:0;width:5px;height:100%}
+.th-intro::before,.th-intro::after{background:#FEC73D}
+.th-a::before,.th-a::after{background:#3a6b6d}
+.th-b::before,.th-b::after{background:#E8825F}
+.th-c::before,.th-c::after{background:#D4A853}
+.th-d::before,.th-d::after{background:#5a8587}
+.th-e::before,.th-e::after{background:#FEC73D}
+.th-result::before,.th-result::after{background:#FEC73D}
+
+/* ===== HEADER ===== */
+.s-header{padding:20px 28px 0 24px;flex-shrink:0}
+.s-num{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.th-intro .s-num,.th-b .s-num,.th-e .s-num,.th-result .s-num{color:#FEC73D}
+.th-a .s-num{color:#3a6b6d}
+.th-c .s-num{color:#D4A853}
+.th-d .s-num{color:#5a8587}
+
+.s-title{font-size:18px;font-weight:800;line-height:1.22;max-width:480px}
+.th-intro .s-title,.th-b .s-title,.th-e .s-title,.th-result .s-title{color:#fff}
+.th-a .s-title{color:#2a3536}
+.th-c .s-title{color:#fff}
+.th-d .s-title{color:#2a3536}
+
+.s-divider{width:40px;height:3px;border:none;margin:10px 0 8px 24px;flex-shrink:0}
+.th-intro .s-divider,.th-e .s-divider{background:#FEC73D}
+.th-a .s-divider{background:#3a6b6d}
+.th-b .s-divider{background:#E8825F}
+.th-c .s-divider{background:#D4A853}
+.th-d .s-divider{background:#5a8587}
+.th-result .s-divider{background:#FEC73D}
+
+/* ===== BODY ===== */
+.s-body{padding:0 28px 0 24px;flex:1;overflow:hidden}
+.s-body p{font-size:12.5px;line-height:1.48;margin-bottom:6px}
+.s-body p:last-child{margin-bottom:0}
+.s-body strong{font-weight:600}
+.th-intro .s-body p,.th-b .s-body p,.th-e .s-body p,.th-result .s-body p{color:#cdd7d8}
+.th-intro .s-body strong,.th-b .s-body strong,.th-e .s-body strong{color:#FEC73D}
+.th-result .s-body strong{color:#FEC73D}
+.th-a .s-body p,.th-d .s-body p{color:#4a5556}
+.th-c .s-body p{color:#cdd3dc}
+
+/* constraint pills */
+.constraints{margin:6px 0 8px;display:flex;flex-wrap:wrap;gap:4px}
+.con-pill{font-size:9px;font-weight:600;letter-spacing:.5px;padding:2px 7px;border-radius:3px;text-transform:uppercase}
+.th-a .con-pill{background:rgba(58,107,109,0.1);color:#3a6b6d}
+.th-b .con-pill{background:rgba(232,130,95,0.12);color:#E8825F}
+.th-c .con-pill{background:rgba(212,168,83,0.12);color:#D4A853}
+.th-d .con-pill{background:rgba(90,133,135,0.1);color:#5a8587}
+.th-e .con-pill{background:rgba(254,199,61,0.1);color:#FEC73D}
+
+/* ===== METHOD CHOICES ===== */
+.choices{display:flex;flex-direction:column;gap:5px;margin-top:4px}
+.choice-btn{
+  display:flex;align-items:center;gap:8px;
+  padding:7px 10px;border-radius:4px;
+  border:2px solid transparent;
+  cursor:pointer;transition:all .15s;
+  background:rgba(255,255,255,0.06);
+}
+.th-a .choice-btn{background:rgba(58,107,109,0.06)}
+.th-d .choice-btn{background:rgba(90,133,135,0.06)}
+
+.choice-btn:hover{border-color:rgba(255,255,255,0.25)}
+.th-a .choice-btn:hover{border-color:rgba(58,107,109,0.35)}
+.th-d .choice-btn:hover{border-color:rgba(90,133,135,0.35)}
+
+.choice-btn.selected{border-color:#FEC73D;background:rgba(254,199,61,0.12)}
+.th-a .choice-btn.selected{border-color:#3a6b6d;background:rgba(58,107,109,0.12)}
+.th-b .choice-btn.selected{border-color:#E8825F;background:rgba(232,130,95,0.15)}
+.th-c .choice-btn.selected{border-color:#D4A853;background:rgba(212,168,83,0.15)}
+.th-d .choice-btn.selected{border-color:#5a8587;background:rgba(90,133,135,0.12)}
+.th-e .choice-btn.selected{border-color:#FEC73D;background:rgba(254,199,61,0.12)}
+
+.choice-radio{
+  width:14px;height:14px;border-radius:50%;
+  border:2px solid rgba(255,255,255,0.3);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+}
+.th-a .choice-radio{border-color:rgba(58,107,109,0.35)}
+.th-d .choice-radio{border-color:rgba(90,133,135,0.35)}
+
+.choice-btn.selected .choice-radio{border-color:currentColor;background:currentColor}
+.choice-btn.selected .choice-radio::after{content:'';width:5px;height:5px;border-radius:50%;background:#fff}
+
+.choice-label{font-size:11.5px;font-weight:700;line-height:1.3}
+.th-intro .choice-label,.th-b .choice-label,.th-c .choice-label,.th-e .choice-label{color:#d4dcdd}
+.th-a .choice-label{color:#3a4a4b}
+.th-d .choice-label{color:#3a4a4b}
+
+.choice-btn.selected .choice-label{color:currentColor}
+
+.choice-hint{font-size:9.5px;line-height:1.3;opacity:.7;margin-top:1px}
+.th-intro .choice-hint,.th-b .choice-hint,.th-c .choice-hint,.th-e .choice-hint{color:#a0b0b0}
+.th-a .choice-hint{color:#6a7a7b}
+.th-d .choice-hint{color:#6a7a7b}
+
+/* ===== FOOTER NAV ===== */
+.s-footer{padding:8px 28px 14px 24px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
+.nav-btn{
+  font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  padding:7px 18px;border-radius:4px;border:none;cursor:pointer;transition:all .15s;
+}
+.nav-btn:disabled{opacity:.3;cursor:default}
+.btn-next{background:#FEC73D;color:#3a4647}
+.btn-next:hover:not(:disabled){background:#ffe066}
+.btn-back{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.6)}
+.btn-back:hover:not(:disabled){background:rgba(255,255,255,0.18)}
+.th-a .btn-back{background:rgba(58,107,109,0.1);color:#5a7879}
+.th-a .btn-next{background:#3a6b6d;color:#fff}
+.th-d .btn-back{background:rgba(90,133,135,0.1);color:#5a8587}
+.th-d .btn-next{background:#5a8587;color:#fff}
+
+/* progress dots */
+.dots{display:flex;gap:5px;align-items:center}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.2);transition:all .2s}
+.dot.done{background:#FEC73D}
+.dot.current{background:#FEC73D;transform:scale(1.3)}
+.th-a .dot.done,.th-a .dot.current{background:#3a6b6d}
+.th-d .dot.done,.th-d .dot.current{background:#5a8587}
+.th-b .dot.done,.th-b .dot.current{background:#E8825F}
+.th-c .dot.done,.th-c .dot.current{background:#D4A853}
+
+/* ===== RESULTS ===== */
+.res-row{
+  display:flex;align-items:flex-start;gap:8px;
+  padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.res-row:last-child{border-bottom:none}
+.res-icon{width:18px;height:18px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin-top:1px}
+.res-ok{background:rgba(6,170,76,0.2);color:#06aa4c}
+.res-fail{background:rgba(232,130,95,0.2);color:#E8825F}
+.res-zone{font-size:11px;font-weight:700;color:#FEC73D;min-width:100px;flex-shrink:0}
+.res-text{font-size:10.5px;line-height:1.4;color:#b8c6c7}
+.res-text em{font-style:normal;color:#E8825F;font-weight:600}
+.res-text strong{color:#06aa4c;font-weight:600}
+
+.score-box{
+  text-align:center;padding:10px 0 4px;
+}
+.score-num{font-size:32px;font-weight:900;color:#FEC73D}
+.score-label{font-size:10px;color:#8a9a9b;letter-spacing:1px;text-transform:uppercase}
+
+</style>
+</head>
+<body>
+
+<div class="frame" id="frame">
+<div class="deck" id="deck">
+
+  <!-- ========== INTRO ========== -->
+  <div class="screen th-intro active" data-idx="0">
+    <div class="s-header">
+      <div class="s-num">Тренажёр</div>
+      <div class="s-title">Подберите метод оценки для каждой рабочей зоны</div>
+    </div>
+    <hr class="s-divider">
+    <div class="s-body">
+      <p><strong>5 зон · 5 методов · 1 верное сочетание</strong></p>
+      <p>Для каждой рабочей зоны只有一个 метод оптимален — исходя из бюджета, штата, сложности задачи и характера перегрузок. Остальные четыре не подходят: слишком просты, слишком дороги, не дают нужного результата или не рассчитаны на такие условия.</p>
+      <p>Оцениваем <strong>только психоэмоциональные и психофизические перегрузки</strong>. Знакомьтесь с условиями зоны и выбирайте метод.</p>
+      <p style="margin-top:8px;font-size:11px;opacity:.6">Методы: матричный · человеческий фактор · сценарии · дерево решений · дерево отказов</p>
+    </div>
+    <div class="s-footer">
+      <div class="dots" id="dots0"></div>
+      <button class="nav-btn btn-next" onclick="go(1)">Начать</button>
+    </div>
+  </div>
+
+  <!-- ========== ZONE 1: Касса ========== -->
+  <div class="screen th-a" data-idx="1">
+    <div class="s-header">
+      <div class="s-num">Зона 1 из 5</div>
+      <div class="s-title">Касса супермаркета</div>
+    </div>
+    <hr class="s-divider">
+    <div class="s-body">
+      <p>1 кассир на кассе, поток 200+ покупателей в смену, монотония, повторяющиеся действия. Кассир жалуется на головные боли и раздражительность к концу 12‑часовой смены.</p>
+      <div class="constraints">
+        <span class="con-pill">бюджет 0 ₽</span>
+        <span class="con-pill">специалист ОТ — совместитель</span>
+        <span class="con-pill">1 рабочее место</span>
+        <span class="con-pill">нет спец. знаний</span>
+      </div>
+      <div class="choices" data-zone="0">
+        <div class="choice-btn" data-method="matrix" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Матричный метод</div><div class="choice-hint">Качественная оценка «вероятность × тяжесть» в таблице</div></div>
+        </div>
+        <div class="choice-btn" data-method="human" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Анализ человеческого фактора</div><div class="choice-hint">Идентификация типов ошибок оператора и их причин</div></div>
+        </div>
+        <div class="choice-btn" data-method="scenario" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Анализ сценариев</div><div class="choice-hint">Моделирование траекторий развития перегрузок</div></div>
+        </div>
+        <div class="choice-btn" data-method="dectree" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Анализ дерева решений</div><div class="choice-hint">Сравнение вариантов介入 по ожидаемой ценности (EVI)</div></div>
+        </div>
+        <div class="choice-btn" data-method="faulttree" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Анализ дерева отказов</div><div class="choice-hint">Дедуктивная логика: от инцидента к причинам через И/ИЛИ</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="s-footer">
+      <div class="dots" id="dots1"></div>
+      <div style="display:flex;gap:8px">
+        <button class="nav-btn btn-back" onclick="go(0)">Назад</button>
+        <button class="nav-btn btn-next" id="next1" disabled onclick="go(2)">Далее</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ZONE 2: Диспетчерская ========== -->
+  <div class="screen th-b" data-idx="2">
+    <div class="s-header">
+      <div class="s-num">Зона 2 из 5</div>
+      <div class="s-title">Диспетчерская служба 112</div>
+    </div>
+    <hr class="s-divider">
+    <div class="s-body">
+      <p>6 операторов, круглосуточный режим, 3 смены. Высокая когнитивная нагрузка: каждые 2 минуты — новый вызов. Критичная ошибка — пропущенный вызов или неверная маршрутизация. За последний год — 3 таких случая.</p>
+      <div class="constraints">
+        <span class="con-pill">бюджет средний</span>
+        <span class="con-pill">специалист ОТ в штате</span>
+        <span class="con-pill">ошибки оператора = главная угроза</span>
+        <span class="con-pill">есть статистика инцидентов</span>
+      </div>
+      <div class="choices" data-zone="1">
+        <div class="choice-btn" data-method="matrix" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Матричный метод</div><div class="choice-hint">Качественная оценка «вероятность × тяжесть» в таблице</div></div>
+        </div>
+        <div class="choice-btn" data-method="human" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Анализ человеческого фактора</div><div class="choice-hint">Идентификация типов ошибок оператора и их причин</div></div>
+        </div>
+        <div class="choice-btn" data-method="scenario" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Анализ сценариев</div><div class="choice-hint">Моделирование траекторий развития перегрузок</div></div>
+        </div>
+        <div class="choice-btn" data-method="dectree" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Анализ дерева решений</div><div class="choice-hint">Сравнение вариантов介入 по ожидаемой ценности (EVI)</div></div>
+        </div>
+        <div class="choice-btn" data-method="faulttree" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Анализ дерева отказов</div><div class="choice-hint">Дедуктивная логика: от инцидента к причинам через И/ИЛИ</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="s-footer">
+      <div class="dots" id="dots2"></div>
+      <div style="display:flex;gap:8px">
+        <button class="nav-btn btn-back" onclick="go(1)">Назад</button>
+        <button class="nav-btn btn-next" id="next2" disabled onclick="go(3)">Далее</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ZONE 3: Маркетинг стартапа ========== -->
+  <div class="screen th-c" data-idx="3">
+    <div class="s-header">
+      <div class="s-num">Зона 3 из 5</div>
+      <div class="s-title">Отдел маркетинга стартапа</div>
+    </div>
+    <hr class="s-divider">
+    <div class="s-body">
+      <p>8 человек, за год штат вырос ×3. Постоянные смены приоритетов, дедлайны «на вчера», неясность перспектив. Два сотрудника на больничном с диагнозом «эмоциональное выгорание». Текучесть — 40% в год.</p>
+      <div class="constraints">
+        <span class="con-pill">бюджет низкий</span>
+        <span class="con-pill">высокая неопределённость</span>
+        <span class="con-pill">нет стабильных процессов</span>
+        <span class="con-pill">ситуация быстро меняется</span>
+      </div>
+      <div class="choices" data-zone="2">
+        <div class="choice-btn" data-method="matrix" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Матричный метод</div><div class="choice-hint">Качественная оценка «вероятность × тяжесть» в таблице</div></div>
+        </div>
+        <div class="choice-btn" data-method="human" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Анализ человеческого фактора</div><div class="choice-hint">Идентификация типов ошибок оператора и их причин</div></div>
+        </div>
+        <div class="choice-btn" data-method="scenario" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Анализ сценариев</div><div class="choice-hint">Моделирование траекторий развития перегрузок</div></div>
+        </div>
+        <div class="choice-btn" data-method="dectree" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Анализ дерева решений</div><div class="choice-hint">Сравнение вариантов介入 по ожидаемой ценности (EVI)</div></div>
+        </div>
+        <div class="choice-btn" data-method="faulttree" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Анализ дерева отказов</div><div class="choice-hint">Дедуктивная логика: от инцидента к причинам через И/ИЛИ</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="s-footer">
+      <div class="dots" id="dots3"></div>
+      <div style="display:flex;gap:8px">
+        <button class="nav-btn btn-back" onclick="go(2)">Назад</button>
+        <button class="nav-btn btn-next" id="next3" disabled onclick="go(4)">Далее</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ZONE 4: Конвейер ========== -->
+  <div class="screen th-d" data-idx="4">
+    <div class="s-header">
+      <div class="s-num">Зона 4 из 5</div>
+      <div class="s-title">Конвейерная линия сборки</div>
+    </div>
+    <hr class="s-divider">
+    <div class="s-body">
+      <p>40 рабочих, 3 смены, физическая + монотонная нагрузка. Руководство готово инвестировать, но нужно выбрать: ротация работников / доп. перерывы / автоматизация участка / наставники. Каждый вариант стоит по-разному и даёт разный эффект.</p>
+      <div class="constraints">
+        <span class="con-pill">бюджет высокий</span>
+        <span class="con-pill">5 вариантов介入</span>
+        <span class="con-pill">нужно сравнить по затратам и эффекту</span>
+        <span class="con-pill">комбинированные перегрузки</span>
+      </div>
+      <div class="choices" data-zone="3">
+        <div class="choice-btn" data-method="matrix" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Матричный метод</div><div class="choice-hint">Качественная оценка «вероятность × тяжесть» в таблице</div></div>
+        </div>
+        <div class="choice-btn" data-method="human" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Анализ человеческого фактора</div><div class="choice-hint">Идентификация типов ошибок оператора и их причин</div></div>
+        </div>
+        <div class="choice-btn" data-method="scenario" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Анализ сценариев</div><div class="choice-hint">Моделирование траекторий развития перегрузок</div></div>
+        </div>
+        <div class="choice-btn" data-method="dectree" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Анализ дерева решений</div><div class="choice-hint">Сравнение вариантов介入 по ожидаемой ценности (EVI)</div></div>
+        </div>
+        <div class="choice-btn" data-method="faulttree" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Анализ дерева отказов</div><div class="choice-hint">Дедуктивная логика: от инцидента к причинам через И/ИЛИ</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="s-footer">
+      <div class="dots" id="dots4"></div>
+      <div style="display:flex;gap:8px">
+        <button class="nav-btn btn-back" onclick="go(3)">Назад</button>
+        <button class="nav-btn btn-next" id="next4" disabled onclick="go(5)">Далее</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ZONE 5: Химпроизводство ========== -->
+  <div class="screen th-e" data-idx="5">
+    <div class="s-header">
+      <div class="s-num">Зона 5 из 5</div>
+      <div class="s-title">Операторская химического производства</div>
+    </div>
+    <hr class="s-divider">
+    <div class="s-body">
+      <p>4 оператора контролируют сложную систему с 12 параметрами. Ошибка = авария с пострадавшими. Инцидент случается только при совпадении нескольких факторов: усталость + нет наставника + сбой сигнализации. Нужно точно определить, какие барьеры критичны.</p>
+      <div class="constraints">
+        <span class="con-pill">бюджет высокий</span>
+        <span class="con-pill">сложная система с логическими зависимостями</span>
+        <span class="con-pill">ошибка = авария</span>
+        <span class="con-pill">факторы работают совместно (И)</span>
+      </div>
+      <div class="choices" data-zone="4">
+        <div class="choice-btn" data-method="matrix" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Матричный метод</div><div class="choice-hint">Качественная оценка «вероятность × тяжесть» в таблице</div></div>
+        </div>
+        <div class="choice-btn" data-method="human" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Анализ человеческого фактора</div><div class="choice-hint">Идентификация типов ошибок оператора и их причин</div></div>
+        </div>
+        <div class="choice-btn" data-method="scenario" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Анализ сценариев</div><div class="choice-hint">Моделирование траекторий развития перегрузок</div></div>
+        </div>
+        <div class="choice-btn" data-method="dectree" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Анализ дерева решений</div><div class="choice-hint">Сравнение вариантов介入 по ожидаемой ценности (EVI)</div></div>
+        </div>
+        <div class="choice-btn" data-method="faulttree" onclick="pick(this)">
+          <div class="choice-radio"></div>
+          <div><div class="choice-label">Анализ дерева отказов</div><div class="choice-hint">Дедуктивная логика: от инцидента к причинам через И/ИЛИ</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="s-footer">
+      <div class="dots" id="dots5"></div>
+      <div style="display:flex;gap:8px">
+        <button class="nav-btn btn-back" onclick="go(4)">Назад</button>
+        <button class="nav-btn btn-next" id="next5" disabled onclick="go(6)">Проверить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== RESULTS ========== -->
+  <div class="screen th-result" data-idx="6">
+    <div class="s-header">
+      <div class="s-num">Результат</div>
+      <div class="s-title" id="resTitle">Проверяем ваши решения</div>
+    </div>
+    <hr class="s-divider">
+    <div class="s-body" id="resBody">
+      <!-- filled by JS -->
+    </div>
+    <div class="s-footer">
+      <div class="dots" id="dots6"></div>
+      <div style="display:flex;gap:8px">
+        <button class="nav-btn btn-back" onclick="go(1)">Пройти снова</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+</div><!-- /frame -->
+
+<script>
+/* ===== DATA ===== */
+const ANSWERS = ['matrix','human','scenario','dectree','faulttree'];
+const ZONES = [
+  {name:'Касса супермаркета',       correct:'matrix',    why:'Нулевой бюджет, нет специалиста, одно рабочее место — матричный метод единственный, который не требует ни спец. знаний, ни затрат. Человеческий фактор и дерево отказов слишком сложны и дороги, сценарии не дают конкретного уровня риска, дерево решений не нужно при отсутствии вариантов介入.'},
+  {name:'Диспетчерская 112',        correct:'human',     why:'Главная угроза — ошибки оператора. Метод человеческого фактора прямо их идентифицирует и классифицирует. Матрица не различает типы ошибок, сценарии моделируют будущее, а не анализируют причины, деревья не фокусируются на операторских ошибках.'},
+  {name:'Маркетинг стартапа',       correct:'scenario',  why:'Высокая неопределённость, нет стабильных процессов — нужно моделировать «что если», а не фиксировать текущее состояние. Матрица статична, человеческий фактор требует стабильной системы, деревья требуют чётких вероятностей, которых здесь нет.'},
+  {name:'Конвейер сборки',          correct:'dectree',   why:'Пять вариантов介入 с разной стоимостью и эффектом — нужно количественно сравнить по EVI. Матрица не сравнивает меры, человеческий фактор не считает затраты, сценарии не дают оптимального выбора, дерево отказов ищет причины, а не выбирает решения.'},
+  {name:'Хим. производство',        correct:'faulttree', why:'Инцидент = совпадение нескольких факторов (вентиль И). Только дерево отказов моделирует логические зависимости И/ИЛИ и выявляет критичные барьеры. Матрица и сценарии не работают с логикой, человеческий фактор не учитывает совпадения, дерево решений выбирает меры, а не ищет причины.'}
+];
+const METHOD_NAMES = {matrix:'Матричный метод',human:'Анализ человеческого фактора',scenario:'Анализ сценариев',dectree:'Анализ дерева решений',faulttree:'Анализ дерева отказов'};
+
+/* ===== STATE ===== */
+let answers = [null,null,null,null,null];
+let current = 0;
+
+/* ===== NAVIGATION ===== */
+function go(idx){
+  current = idx;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelector('.screen[data-idx="'+idx+'"]').classList.add('active');
+  updateDots();
+  if(idx===6) showResults();
+}
+
+function updateDots(){
+  for(let i=0;i<=6;i++){
+    const c = document.getElementById('dots'+i);
+    if(!c) continue;
+    c.innerHTML='';
+    for(let d=0;d<5;d++){
+      const dot=document.createElement('div');
+      dot.className='dot';
+      if(answers[d]!==null) dot.classList.add('done');
+      if(i>0 && i<6 && d===(i-1)) dot.classList.add('current');
+      c.appendChild(dot);
+    }
+  }
+}
+
+/* ===== SELECTION ===== */
+function pick(el){
+  const zone = parseInt(el.closest('.choices').dataset.zone);
+  const method = el.dataset.method;
+  answers[zone] = method;
+
+  /* deselect siblings */
+  el.closest('.choices').querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+
+  /* enable next */
+  const btn = document.getElementById('next'+(zone+1));
+  if(btn) btn.disabled = false;
+
+  updateDots();
+}
+
+/* ===== RESULTS ===== */
+function showResults(){
+  let score = 0;
+  const body = document.getElementById('resBody');
+  body.innerHTML = '';
+
+  for(let i=0;i<5;i++){
+    const ok = answers[i] === ZONES[i].correct;
+    if(ok) score++;
+    const row = document.createElement('div');
+    row.className = 'res-row';
+    row.innerHTML =
+      '<div class="res-icon '+(ok?'res-ok':'res-fail')+'">'+(ok?'✓':'✗')+'</div>'+
+      '<div class="res-zone">'+ZONES[i].name+'</div>'+
+      '<div class="res-text">'+
+        (ok
+          ? '<strong>'+METHOD_NAMES[answers[i]]+'</strong> — верно'
+          : 'Вы выбрали <em>'+METHOD_NAMES[answers[i]]+'</em>, а оптимально — <strong>'+METHOD_NAMES[ZONES[i].correct]+'</strong>'
+        )+
+        '. '+ZONES[i].why+
+      '</div>';
+    body.appendChild(row);
+  }
+
+  document.getElementById('resTitle').textContent = score+' из 5 — '+(score===5?'Всё верно!':score>=3?'Неплохо, но есть ошибки':'Стоит повторить');
+}
+
+/* ===== RESIZER ===== */
+function resize(){
+  const f=document.getElementById('frame'),fw=f.clientWidth,fh=f.clientHeight,
+  s=Math.min(fw/560,fh/500);
+  const d=document.getElementById('deck');
+  d.style.transform='scale('+s+')';
+  d.style.transformOrigin='center center';
+}
+window.addEventListener('resize',resize);
+resize();
+updateDots();
+</script>
+
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a13d460fbfc30a19',t:'MTc4MjgyMzU4NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
