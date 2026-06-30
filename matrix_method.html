@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Матричный метод оценки перегрузок</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#3a4647;font-family:-apple-system,'Segoe UI','Helvetica Neue',Arial,sans-serif}
+
+.frame{width:100vw;max-width:100vw;height:500px;max-height:500px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.swiper{width:100%;height:100%}
+.swiper-slide{overflow:hidden;display:flex;align-items:center;justify-content:center}
+
+.slide{width:560px;height:500px;position:relative;display:flex;flex-direction:column;transform-origin:center center;overflow:hidden}
+
+.slide-accent-top{position:absolute;top:0;left:0;width:100%;height:5px}
+.slide-accent-left{position:absolute;top:0;left:0;width:5px;height:100%}
+
+/* ===== THEMES ===== */
+
+/* A: Warm cream + deep teal */
+.th-a{background:#EDE9E3}
+.th-a .slide-accent-top,.th-a .slide-accent-left{background:#3a6b6d}
+.th-a .s-num{color:#3a6b6d}
+.th-a .s-title{color:#2a3536}
+.th-a .s-divider{background:#3a6b6d}
+.th-a .s-body p,.th-a .s-body li{color:#4a5556}
+.th-a .s-body strong{color:#3a6b6d}
+.th-a .s-body li::marker{color:#3a6b6d}
+.th-a .s-tag{background:rgba(58,107,109,0.1);color:#3a6b6d}
+.th-a .s-result{background:rgba(58,107,109,0.07);border-left-color:#3a6b6d}
+.th-a .s-result-label{color:#3a6b6d}
+.th-a .s-result-text{color:#5a6869}
+.th-a .s-footer{background:#ddd9d3}
+.th-a .s-footer span{color:#9aa5a6}
+
+/* B: Dark teal + gold */
+.th-b{background:#495758}
+.th-b .slide-accent-top,.th-b .slide-accent-left{background:#FEC73D}
+.th-b .s-num{color:#FEC73D}
+.th-b .s-title{color:#ffffff}
+.th-b .s-divider{background:#FEC73D}
+.th-b .s-body p,.th-b .s-body li{color:#d4dcdd}
+.th-b .s-body strong{color:#FEC73D}
+.th-b .s-body li::marker{color:#FEC73D}
+.th-b .s-tag{background:rgba(254,199,61,0.1);color:#FEC73D}
+.th-b .s-result{background:rgba(254,199,61,0.08);border-left-color:#FEC73D}
+.th-b .s-result-label{color:#FEC73D}
+.th-b .s-result-text{color:#c4cecf}
+.th-b .s-footer{background:#3a4647}
+.th-b .s-footer span{color:#6e7f80}
+
+/* C: Cool gray + teal */
+.th-c{background:#E8ECEC}
+.th-c .slide-accent-top,.th-c .slide-accent-left{background:#5a8587}
+.th-c .s-num{color:#5a8587}
+.th-c .s-title{color:#2a3536}
+.th-c .s-divider{background:#5a8587}
+.th-c .s-body p,.th-c .s-body li{color:#4a5556}
+.th-c .s-body strong{color:#5a8587}
+.th-c .s-body li::marker{color:#5a8587}
+.th-c .s-tag{background:rgba(90,133,135,0.1);color:#5a8587}
+.th-c .s-result{background:rgba(90,133,135,0.07);border-left-color:#5a8587}
+.th-c .s-result-label{color:#5a8587}
+.th-c .s-result-text{color:#5a6869}
+.th-c .s-footer{background:#d8dcdc}
+.th-c .s-footer span{color:#8a9a9b}
+
+/* D: Dark charcoal + coral */
+.th-d{background:#3e4445}
+.th-d .slide-accent-top,.th-d .slide-accent-left{background:#E8825F}
+.th-d .s-num{color:#E8825F}
+.th-d .s-title{color:#ffffff}
+.th-d .s-divider{background:#E8825F}
+.th-d .s-body p,.th-d .s-body li{color:#d4d8d8}
+.th-d .s-body strong{color:#E8825F}
+.th-d .s-body li::marker{color:#E8825F}
+.th-d .s-tag{background:rgba(232,130,95,0.12);color:#E8825F}
+.th-d .s-result{background:rgba(232,130,95,0.1);border-left-color:#E8825F}
+.th-d .s-result-label{color:#E8825F}
+.th-d .s-result-text{color:#c4caca}
+.th-d .s-footer{background:#2e3435}
+.th-d .s-footer span{color:#6e7878}
+
+/* E: Slate blue + amber */
+.th-e{background:#4a5668}
+.th-e .slide-accent-top,.th-e .slide-accent-left{background:#D4A853}
+.th-e .s-num{color:#D4A853}
+.th-e .s-title{color:#ffffff}
+.th-e .s-divider{background:#D4A853}
+.th-e .s-body p,.th-e .s-body li{color:#cdd3dc}
+.th-e .s-body strong{color:#D4A853}
+.th-e .s-body li::marker{color:#D4A853}
+.th-e .s-tag{background:rgba(212,168,83,0.12);color:#D4A853}
+.th-e .s-result{background:rgba(212,168,83,0.1);border-left-color:#D4A853}
+.th-e .s-result-label{color:#D4A853}
+.th-e .s-result-text{color:#b8c2ce}
+.th-e .s-footer{background:#3a4555}
+.th-e .s-footer span{color:#7a8696}
+
+/* ===== CONTENT ===== */
+.s-header{padding:22px 28px 0 24px;flex-shrink:0}
+.s-num{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.s-title{font-size:19px;font-weight:800;line-height:1.22;max-width:470px}
+.s-divider{width:44px;height:3px;border:none;margin:10px 0 9px 24px;flex-shrink:0}
+
+.s-body{padding:0 28px 0 24px;flex:1;overflow:hidden}
+.s-body p{font-size:13px;line-height:1.5;margin-bottom:7px}
+.s-body p:last-child{margin-bottom:0}
+.s-body strong{font-weight:600}
+.s-body ul{font-size:13px;line-height:1.5;margin:0 0 7px 16px;padding:0}
+.s-body ul:last-child{margin-bottom:0}
+.s-body li{margin-bottom:3px;padding-left:2px}
+
+.s-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:3px;margin-right:4px;margin-bottom:3px}
+
+/* mini matrix table */
+.mini-matrix{margin:6px 0 8px;border-collapse:collapse;font-size:10.5px;line-height:1.3}
+.mini-matrix th,.mini-matrix td{padding:4px 7px;text-align:center;border:1px solid rgba(128,128,128,0.2)}
+.th-a .mini-matrix th{background:rgba(58,107,109,0.08);color:#3a6b6d;font-weight:700}
+.th-b .mini-matrix th{background:rgba(254,199,61,0.08);color:#FEC73D;font-weight:700}
+.th-c .mini-matrix th{background:rgba(90,133,135,0.08);color:#5a8587;font-weight:700}
+.th-d .mini-matrix th{background:rgba(232,130,95,0.08);color:#E8825F;font-weight:700}
+.th-e .mini-matrix th{background:rgba(212,168,83,0.08);color:#D4A853;font-weight:700}
+.th-a .mini-matrix td{color:#4a5556}
+.th-b .mini-matrix td{color:#c4cecf}
+.th-c .mini-matrix td{color:#4a5556}
+.th-d .mini-matrix td{color:#c4caca}
+.th-e .mini-matrix td{color:#b8c2ce}
+.mini-matrix .cell-green{background:rgba(6,170,76,0.12)}
+.mini-matrix .cell-yellow{background:rgba(254,199,61,0.15)}
+.mini-matrix .cell-red{background:rgba(232,130,95,0.15)}
+.mini-matrix .row-label{text-align:left;font-weight:600;white-space:nowrap}
+
+.s-result{margin:0 28px 10px 24px;padding:8px 12px;border-left:3px solid;flex-shrink:0}
+.s-result-label{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px}
+.s-result-text{font-size:11.5px;line-height:1.4}
+
+.s-footer{height:15px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+.s-footer span{font-size:7px;letter-spacing:0.4px}
+
+/* ===== NAVIGATION ===== */
+.nav-side{position:absolute;top:50%;transform:translateY(-50%);z-index:20;width:32px;height:56px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.nav-side-left{left:6px}
+.nav-side-right{right:6px}
+.nav-arrow{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,0.35);background:rgba(58,70,71,0.6);display:flex;align-items:center;justify-content:center;font-size:15px;color:rgba(255,255,255,0.7);transition:all .2s;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.nav-arrow:hover{background:rgba(254,199,61,0.85);border-color:#FEC73D;color:#3a4647}
+.nav-counter{position:absolute;top:10px;right:14px;z-index:20;font-size:11px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:.5px}
+.progress-bar{position:absolute;bottom:0;left:0;height:3px;background:#FEC73D;z-index:20;transition:width .3s}
+</style>
+</head>
+<body>
+
+<div class="frame" id="frame">
+  <div class="swiper" id="swiper">
+    <div class="swiper-wrapper">
+
+      <!-- ===== 1: Титульный ===== -->
+      <div class="swiper-slide">
+        <div class="slide th-b">
+          <div class="slide-accent-top"></div>
+          <div class="slide-accent-left"></div>
+          <div class="s-header">
+            <div class="s-num">Метод 02 — подробно</div>
+            <div class="s-title">Матричный метод оценки перегрузок</div>
+          </div>
+          <hr class="s-divider">
+          <div class="s-body">
+            <p>Качественный (экспертный) метод: на пересечении <strong>вероятности</strong> и <strong>тяжести</strong> в таблице определяется уровень риска. Простой, наглядный, не требует спец. знаний и затрат.</p>
+            <p><strong>Адаптация под перегрузки:</strong> вместо «отказ оборудования» — ошибка или ухудшение состояния работника из-за перегрузки. Вместо «вероятность аварии» — вероятность того, что перегрузка приведёт к негативным последствиям.</p>
+            <p>Рекомендуется как <strong>стартовый метод</strong>: его результат — входные данные для более сложных методов (человеческий фактор, сценарии, деревья). Также единственный метод, реалистичный при нулевом бюджете и отсутствии специалиста.</p>
+          </div>
+          <div class="s-result">
+            <div class="s-result-label">Нормативная база</div>
+            <div class="s-result-text">Приказ Минтруда № 926, п. 35–38 · Прил. 9–15 (матрицы «3×5» и «5×5») · Прил. 13 (шкалы вероятности и тяжести)</div>
+          </div>
+          <div class="s-footer">
+            <span>Приказ Минтруда № 926</span>
+            <span>п. 35–38</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 2: Пять шагов ===== -->
+      <div class="swiper-slide">
+        <div class="slide th-a">
+          <div class="slide-accent-top"></div>
+          <div class="slide-accent-left"></div>
+          <div class="s-header">
+            <div class="s-num">Процесс</div>
+            <div class="s-title">Пять шагов матричного метода</div>
+          </div>
+          <hr class="s-divider">
+          <div class="s-body">
+            <ul>
+              <li><strong>Шаг 1 — Подготовка:</strong> определить перечень рабочих мест и видов работ, подлежащих оценке. Назначить лицо, ответственное за оценку.</li>
+              <li><strong>Шаг 2 — Реестр опасностей:</strong> по каждому рабочему месту выявить факторы перегрузок — психосоциальные (дедлайны, конфликты, изоляция) и психофизические (монотонность, сменность, информационная перегрузка).</li>
+              <li><strong>Шаг 3 — Оценка:</strong> для каждого фактора экспертно определить вероятность (1–7) и тяжесть (1–15), перемножить — получить уровень риска.</li>
+              <li><strong>Шаг 4 — Меры снижения:</strong> для высоких рисков — немедленные меры, для умеренных — план мероприятий, для низких — поддержание текущего уровня.</li>
+              <li><strong>Шаг 5 — Документирование:</strong> реестр опасностей с оценённым уровнем каждой + план мероприятий (прил. 16).</li>
+            </ul>
+          </div>
+          <div class="s-result">
+            <div class="s-result-label">Ключевое отличие</div>
+            <div class="s-result-text">Шаг 2 при адаптации: вместо «опасность оборудования» в реестр вносятся конкретные перегрузки с указанием типа (психосоциальная / психофизическая / комбинированная)</div>
+          </div>
+          <div class="s-footer">
+            <span>Приказ Минтруда № 926</span>
+            <span>п. 37</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 3: Матрица 3×5 ===== -->
+      <div class="swiper-slide">
+        <div class="slide th-c">
+          <div class="slide-accent-top"></div>
+          <div class="slide-accent-left"></div>
+          <div class="s-header">
+            <div class="s-num">Матрица</div>
+            <div class="s-title">Матрица «3×5»: для микропредприятий</div>
+          </div>
+          <hr class="s-divider">
+          <div class="s-body">
+            <p>Тяжесть (3 уровня) × Вероятность (5 уровней) = 15 ячеек. Пример — прил. 9:</p>
+            <table class="mini-matrix">
+              <tr><th></th><th>Низкая (1)</th><th>Средняя (2)</th><th>Высокая (3)</th><th>Очень выс. (4)</th><th>Постоян. (5)</th></tr>
+              <tr><td class="row-label">Незначит. (1)</td><td class="cell-green">1</td><td class="cell-green">2</td><td class="cell-green">3</td><td class="cell-yellow">4</td><td class="cell-yellow">5</td></tr>
+              <tr><td class="row-label">Средняя (2)</td><td class="cell-green">2</td><td class="cell-yellow">4</td><td class="cell-yellow">6</td><td class="cell-red">8</td><td class="cell-red">10</td></tr>
+              <tr><td class="row-label">Значительн. (3)</td><td class="cell-yellow">3</td><td class="cell-yellow">6</td><td class="cell-red">9</td><td class="cell-red">12</td><td class="cell-red">15</td></tr>
+            </table>
+            <p><span class="s-tag">зелёный</span>низкий — поддерживать. <span class="s-tag">жёлтый</span>умеренный — планировать меры. <span class="s-tag">красный</span>высокий — немедленные меры.</p>
+            <p>При перегрузках «незначительная» тяжесть = микростресс, дискомфорт; «значительная» = выгорание, временная нетрудоспособность.</p>
+          </div>
+          <div class="s-result">
+            <div class="s-result-label">Результат</div>
+            <div class="s-result-text">Цветовая категоризация риска по каждому фактору перегрузки; визуально понятно для работников без спец. подготовки</div>
+          </div>
+          <div class="s-footer">
+            <span>Приказ Минтруда № 926</span>
+            <span>прил. 9</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 4: Матрица 5×5 ===== -->
+      <div class="swiper-slide">
+        <div class="slide th-e">
+          <div class="slide-accent-top"></div>
+          <div class="slide-accent-left"></div>
+          <div class="s-header">
+            <div class="s-num">Матрица</div>
+            <div class="s-title">Матрица «5×5»: более точная оценка</div>
+          </div>
+          <hr class="s-divider">
+          <div class="s-body">
+            <p>5 уровней тяжести × 5 уровней вероятности = 25 ячеек, 3 зоны риска (прил. 14–15). Даёт больше градаций — различает, например, «катастрофическую» тяжесть от «значительной»:</p>
+            <table class="mini-matrix">
+              <tr><th></th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr>
+              <tr><td class="row-label">Незначит. (1)</td><td class="cell-green">1</td><td class="cell-green">2</td><td class="cell-green">3</td><td class="cell-green">4</td><td class="cell-green">5</td></tr>
+              <tr><td class="row-label">Низкая (2)</td><td class="cell-green">2</td><td class="cell-green">4</td><td class="cell-yellow">6</td><td class="cell-yellow">8</td><td class="cell-yellow">10</td></tr>
+              <tr><td class="row-label">Средняя (3)</td><td class="cell-green">3</td><td class="cell-yellow">6</td><td class="cell-yellow">9</td><td class="cell-yellow">12</td><td class="cell-red">15</td></tr>
+              <tr><td class="row-label">Значительн. (4)</td><td class="cell-green">4</td><td class="cell-yellow">8</td><td class="cell-yellow">12</td><td class="cell-red">16</td><td class="cell-red">20</td></tr>
+              <tr><td class="row-label">Катастроф. (5)</td><td class="cell-yellow">5</td><td class="cell-yellow">10</td><td class="cell-red">15</td><td class="cell-red">20</td><td class="cell-red">25</td></tr>
+            </table>
+            <p>При перегрузках «катастрофическая» = стойкая утрата трудоспособности, хроническое заболевание, риск суицида на фоне выгорания.</p>
+          </div>
+          <div class="s-result">
+            <div class="s-result-label">Когда использовать</div>
+            <div class="s-result-text">Когда нужна более тонкая дифференциация: много рабочих мест с разными уровнями перегрузок, когда границы между «умеренным» и «высоким» критичны для принятия решения</div>
+          </div>
+          <div class="s-footer">
+            <span>Приказ Минтруда № 926</span>
+            <span>прил. 14–15</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 5: Шкала вероятности ===== -->
+      <div class="swiper-slide">
+        <div class="slide th-d">
+          <div class="slide-accent-top"></div>
+          <div class="slide-accent-left"></div>
+          <div class="s-header">
+            <div class="s-num">Вероятность</div>
+            <div class="s-title">Оценка вероятности перегрузки</div>
+          </div>
+          <hr class="s-divider">
+          <div class="s-body">
+            <p>Шкала из прил. 13, адаптированная: вместо «вероятность аварии» — <strong>вероятность негативных последствий перегрузки</strong>:</p>
+            <ul>
+              <li><strong>1 — Очень низкая:</strong> перегрузка не возникает за всю карьеру; получение вреда практически исключено</li>
+              <li><strong>2 — Низкая:</strong> перегрузка возникает в отдельные периоды; для реализации вреда нужны многочисленные совпадения</li>
+              <li><strong>3 — Средняя:</strong> перегрузка возникает регулярно, но не постоянно; вред возможен, хотя не характерен</li>
+              <li><strong>5 — Высокая:</strong> перегрузка постоянна; вред происходит периодически, высокая степень реализации</li>
+              <li><strong>7 — Очень высокая:</strong> перегрузка хроническая; вред почти неизбежен, случается регулярно</li>
+            </ul>
+            <p><strong>Критерий:</strong> как часто работник действительно испытывает данную перегрузку и как часто она приводит к ухудшению состояния или ошибке.</p>
+          </div>
+          <div class="s-result">
+            <div class="s-result-label">Результат</div>
+            <div class="s-result-text">Числовое значение вероятности (1–7) по каждому фактору перегрузки на каждом рабочем месте</div>
+          </div>
+          <div class="s-footer">
+            <span>Приказ Минтруда № 926</span>
+            <span>прил. 13, табл. 13.2</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 6: Шкала тяжести ===== -->
+      <div class="swiper-slide">
+        <div class="slide th-a">
+          <div class="slide-accent-top"></div>
+          <div class="slide-accent-left"></div>
+          <div class="s-header">
+            <div class="s-num">Тяжесть</div>
+            <div class="s-title">Оценка тяжести последствий перегрузки</div>
+          </div>
+          <hr class="s-divider">
+          <div class="s-body">
+            <p>Шкала из прил. 13, адаптированная: вместо «ущерб от аварии» — <strong>ущерб для здоровья и безопасности от перегрузки</strong>:</p>
+            <ul>
+              <li><strong>1 — Незначительный:</strong> микростресс, дискомфорт; медпомощь не нужна; восстановление к началу следующей смены</li>
+              <li><strong>5 — Малый:</strong> лёгкое воздействие на здоровье; обращение к врачу, потеря трудоспособности до 3 дней</li>
+              <li><strong>10 — Средний:</strong> неблагоприятное воздействие; нетрудоспособность до 30 дней; начальные признаки профзаболевания после 15+ лет работы</li>
+              <li><strong>13 — Большой:</strong> значительная утрата трудоспособности; расстройство 30–60 дней; лечение в стационаре</li>
+              <li><strong>15 — Очень большой:</strong> смертельный случай, хроническое заболевание, стойкая утрата трудоспособности</li>
+            </ul>
+          </div>
+          <div class="s-result">
+            <div class="s-result-label">Важно</div>
+            <div class="s-result-text">При перегрузках тяжесть включает психосоматический ущерб: хроническая гипертония на фоне стресса, депрессия при выгорании — это «средний» и «большой» уровни</div>
+          </div>
+          <div class="s-footer">
+            <span>Приказ Минтруда № 926</span>
+            <span>прил. 13, табл. 13.1</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 7: Цветовые зоны ===== -->
+      <div class="swiper-slide">
+        <div class="slide th-b">
+          <div class="slide-accent-top"></div>
+          <div class="slide-accent-left"></div>
+          <div class="s-header">
+            <div class="s-num">Зоны</div>
+            <div class="s-title">Три зоны риска и действия</div>
+          </div>
+          <hr class="s-divider">
+          <div class="s-body">
+            <p><span class="s-tag" style="background:rgba(6,170,76,0.15);color:#06aa4c">Зелёная — низкий</span>риск удовлетворителен. Дополнительные меры не требуются, но необходимо <strong>поддерживать</strong> существующий уровень контроля. Фиксируются действующие меры: регламентированные перерывы, чек‑листы, инструктажи.</p>
+            <p><span class="s-tag" style="background:rgba(254,199,61,0.15);color:#c4a000">Жёлтая — умеренный</span>риск может быть снижен до практически обоснованного уровня. <strong>Планируются мероприятия</strong> с установленными сроками. Примеры: ограничение сверхурочных, внедрение наставничества, тренинг по управлению стрессом.</p>
+            <p><span class="s-tag" style="background:rgba(232,130,95,0.15);color:#E8825F">Красная — высокий</span>риск недопустим. <strong>Немедленные меры:</strong> приостановка работ, снятие работника с задачи, привлечение дублёра. Руководитель определяет необходимость немедленного устранения или приостановки до снижения риска.</p>
+          </div>
+          <div class="s-result">
+            <div class="s-result-label">Результат</div>
+            <div class="s-result-text">Каждый фактор перегрузки получает цветовую категорию; приоритет — красные → жёлтые → зелёные</div>
+          </div>
+          <div class="s-footer">
+            <span>Приказ Минтруда № 926</span>
+            <span>прил. 13, табл. 13.3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 8: Практический пример ===== -->
+      <div class="swiper-slide">
+        <div class="slide th-c">
+          <div class="slide-accent-top"></div>
+          <div class="slide-accent-left"></div>
+          <div class="s-header">
+            <div class="s-num">Пример</div>
+            <div class="s-title">Касса супермаркета: оценка перегрузок</div>
+          </div>
+          <hr class="s-divider">
+          <div class="s-body">
+            <p>Кассир, 12‑часовая смена, 200+ покупателей. Факторы перегрузок:</p>
+            <table class="mini-matrix" style="font-size:10px">
+              <tr><th>Фактор перегрузки</th><th>Тип</th><th>Вероятн.</th><th>Тяжесть</th><th>Риск</th><th>Зона</th></tr>
+              <tr><td class="row-label">Монотонность</td><td>психофиз.</td><td>5</td><td>5</td><td>25</td><td class="cell-red">высокий</td></tr>
+              <tr><td class="row-label">12‑часовая смена</td><td>психофиз.</td><td>5</td><td>10</td><td>50</td><td class="cell-red">высокий</td></tr>
+              <tr><td class="row-label">Поток покупателей</td><td>психосоц.</td><td>5</td><td>5</td><td>25</td><td class="cell-red">высокий</td></tr>
+              <tr><td class="row-label">Социальная изоляция</td><td>психосоц.</td><td>3</td><td>5</td><td>15</td><td class="cell-yellow">умерен.</td></tr>
+              <tr><td class="row-label">Жалобы клиентов</td><td>психосоц.</td><td>3</td><td>1</td><td>3</td><td class="cell-green">низкий</td></tr>
+            </table>
+            <p>Итог: 3 фактора в красной зоне — приоритет мер. Смена и монотонность взаимосвязаны: ротация + сокращение смены до 8 часов снизит оба риска.</p>
+          </div>
+          <div class="s-result">
+            <div class="s-result-label">Результат</div>
+            <div class="s-result-text">Реестр из 5 факторов с оценкой; план мероприятий: сокращение смены, ротация, перерывы — для красных зон; мониторинг — для жёлтой</div>
+          </div>
+          <div class="s-footer">
+            <span>Приказ Минтруда № 926</span>
+            <span>п. 37, прил. 9, 16</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 9: Документирование и интеграция ===== -->
+      <div class="swiper-slide">
+        <div class="slide th-e">
+          <div class="slide-accent-top"></div>
+          <div class="slide-accent-left"></div>
+          <div class="s-header">
+            <div class="s-num">Итог</div>
+            <div class="s-title">Документирование и интеграция</div>
+          </div>
+          <hr class="s-divider">
+          <div class="s-body">
+            <p><strong>Документы по результатам матричного метода:</strong></p>
+            <ul>
+              <li>реестр опасностей с типом перегрузки, вероятностью, тяжестью, уровнем риска и зоной</li>
+              <li>план мероприятий по управлению рисками (прил. 16): номер опасности, мера, источник финансирования, срок, ответственный, отметка</li>
+            </ul>
+            <p><strong>Интеграция с другими методами:</strong></p>
+            <ul>
+              <li>красные зоны → углублённый анализ методом <strong>человеческого фактора</strong> (идентификация типов ошибок)</li>
+              <li>красные зоны с высокой неопределённостью → <strong>сценарии</strong> (моделирование траекторий)</li>
+              <li>если несколько вариантов мер → <strong>дерево решений</strong> (сравнение по EVI)</li>
+              <li>если факторы взаимодействуют логически → <strong>дерево отказов</strong> (вентиля И/ИЛИ)</li>
+            </ul>
+            <p>Матрица — <strong>первый проход</strong>: быстро отсортировать факторы по приоритету и решить, где нужны более глубокие методы.</p>
+          </div>
+          <div class="s-result">
+            <div class="s-result-label">Итог</div>
+            <div class="s-result-text">Матричный метод — скрининг: быстро, дёшево, наглядно. Его результат — приоритизированный список перегрузок и план мер, плюс сигнал: где нужен более глубокий анализ</div>
+          </div>
+          <div class="s-footer">
+            <span>Приказ Минтруда № 926</span>
+            <span>п. 35–38, 87–93, прил. 16</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /swiper-wrapper -->
+  </div><!-- /swiper -->
+
+  <div class="nav-side nav-side-left" id="prevBtn"><div class="nav-arrow">&#8249;</div></div>
+  <div class="nav-side nav-side-right" id="nextBtn"><div class="nav-arrow">&#8250;</div></div>
+  <div class="nav-counter" id="counter">1 / 9</div>
+  <div class="progress-bar" id="progressBar" style="width:11.1%"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+(function(){
+  const swiper=new Swiper('#swiper',{direction:'horizontal',slidesPerView:1,speed:350,on:{slideChange:updateUI}});
+  document.getElementById('prevBtn').addEventListener('click',()=>swiper.slidePrev());
+  document.getElementById('nextBtn').addEventListener('click',()=>swiper.slideNext());
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' ')swiper.slideNext();
+    if(e.key==='ArrowLeft')swiper.slidePrev();
+  });
+  function updateUI(){
+    const i=swiper.activeIndex+1,t=swiper.slides.length;
+    document.getElementById('counter').textContent=i+' / '+t;
+    document.getElementById('progressBar').style.width=(i/t*100)+'%';
+  }
+  function resize(){
+    const f=document.getElementById('frame'),fw=f.clientWidth,fh=f.clientHeight,
+    s=Math.min(fw/560,fh/500);
+    document.querySelectorAll('.slide').forEach(sl=>{
+      sl.style.transform='scale('+s+')';
+      sl.style.transformOrigin='center center';
+    });
+  }
+  window.addEventListener('resize',resize);resize();
+})();
+</script>
+</body>
+</html>
