@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сценарии · Дерево решений · Причинно‑следственные связи</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#3a4647;font-family:-apple-system,'Segoe UI','Helvetica Neue',Arial,sans-serif}
+.frame{width:100vw;max-width:100vw;height:500px;max-height:500px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.swiper{width:100%;height:100%}
+.swiper-slide{overflow:hidden;display:flex;align-items:center;justify-content:center}
+.slide{width:560px;height:500px;position:relative;display:flex;flex-direction:column;transform-origin:center center;overflow:hidden}
+.slide-accent-top{position:absolute;top:0;left:0;width:100%;height:5px}
+.slide-accent-left{position:absolute;top:0;left:0;width:5px;height:100%}
+
+/* S: Light warm + teal — Scenario */
+.th-s{background:#EDE9E3}
+.th-s .slide-accent-top,.th-s .slide-accent-left{background:#3a6b6d}
+.th-s .s-num{color:#3a6b6d}.th-s .s-title{color:#2a3536}.th-s .s-divider{background:#3a6b6d}
+.th-s .s-body p,.th-s .s-body li{color:#4a5556}.th-s .s-body strong{color:#3a6b6d}.th-s .s-body li::marker{color:#3a6b6d}
+.th-s .s-tag{background:rgba(58,107,109,0.1);color:#3a6b6d}
+.th-s .s-result{background:rgba(58,107,109,0.07);border-left-color:#3a6b6d}.th-s .s-result-label{color:#3a6b6d}.th-s .s-result-text{color:#5a6869}
+.th-s .s-footer{background:#ddd9d3}.th-s .s-footer span{color:#9aa5a6}
+
+/* D: Slate blue + amber — Decision Tree */
+.th-d{background:#4a5668}
+.th-d .slide-accent-top,.th-d .slide-accent-left{background:#D4A853}
+.th-d .s-num{color:#D4A853}.th-d .s-title{color:#fff}.th-d .s-divider{background:#D4A853}
+.th-d .s-body p,.th-d .s-body li{color:#cdd3dc}.th-d .s-body strong{color:#D4A853}.th-d .s-body li::marker{color:#D4A853}
+.th-d .s-tag{background:rgba(212,168,83,0.12);color:#D4A853}
+.th-d .s-result{background:rgba(212,168,83,0.1);border-left-color:#D4A853}.th-d .s-result-label{color:#D4A853}.th-d .s-result-text{color:#b8c2ce}
+.th-d .s-footer{background:#3a4555}.th-d .s-footer span{color:#7a8696}
+
+/* K: Dark charcoal + coral — Cause‑Effect */
+.th-k{background:#3e4445}
+.th-k .slide-accent-top,.th-k .slide-accent-left{background:#E8825F}
+.th-k .s-num{color:#E8825F}.th-k .s-title{color:#fff}.th-k .s-divider{background:#E8825F}
+.th-k .s-body p,.th-k .s-body li{color:#d4d8d8}.th-k .s-body strong{color:#E8825F}.th-k .s-body li::marker{color:#E8825F}
+.th-k .s-tag{background:rgba(232,130,95,0.12);color:#E8825F}
+.th-k .s-result{background:rgba(232,130,95,0.1);border-left-color:#E8825F}.th-k .s-result-label{color:#E8825F}.th-k .s-result-text{color:#c4caca}
+.th-k .s-footer{background:#2e3435}.th-k .s-footer span{color:#6e7878}
+
+/* I: Deep teal + gold — Intro */
+.th-i{background:#3a5253}
+.th-i .slide-accent-top,.th-i .slide-accent-left{background:#FEC73D}
+.th-i .s-num{color:#FEC73D}.th-i .s-title{color:#fff}.th-i .s-divider{background:#FEC73D}
+.th-i .s-body p,.th-i .s-body li{color:#cdd7d8}.th-i .s-body strong{color:#FEC73D}.th-i .s-body li::marker{color:#FEC73D}
+.th-i .s-result{background:rgba(254,199,61,0.08);border-left-color:#FEC73D}.th-i .s-result-label{color:#FEC73D}.th-i .s-result-text{color:#b8c6c7}
+.th-i .s-footer{background:#2d4243}.th-i .s-footer span{color:#6e8080}
+
+.s-header{padding:22px 28px 0 24px;flex-shrink:0}
+.s-num{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.s-title{font-size:19px;font-weight:800;line-height:1.22;max-width:470px}
+.s-divider{width:44px;height:3px;border:none;margin:10px 0 9px 24px;flex-shrink:0}
+.s-body{padding:0 28px 0 24px;flex:1;overflow:hidden}
+.s-body p{font-size:13px;line-height:1.5;margin-bottom:7px}
+.s-body p:last-child{margin-bottom:0}
+.s-body strong{font-weight:600}
+.s-body ul{font-size:13px;line-height:1.5;margin:0 0 7px 16px;padding:0}
+.s-body ul:last-child{margin-bottom:0}
+.s-body li{margin-bottom:3px;padding-left:2px}
+.s-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:3px;margin-right:4px;margin-bottom:3px}
+.s-gost{font-size:10px;line-height:1.4;opacity:.65;margin-top:5px;padding:4px 8px;border-radius:3px}
+.th-i .s-gost,.th-d .s-gost,.th-k .s-gost{background:rgba(255,255,255,0.06);color:#a0b0b0}
+.th-s .s-gost{background:rgba(0,0,0,0.04);color:#7a8a8b}
+.s-result{margin:0 28px 10px 24px;padding:8px 12px;border-left:3px solid;flex-shrink:0}
+.s-result-label{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px}
+.s-result-text{font-size:11.5px;line-height:1.4}
+.s-footer{height:15px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+.s-footer span{font-size:7px;letter-spacing:.4px}
+
+.nav-side{position:absolute;top:50%;transform:translateY(-50%);z-index:20;width:32px;height:56px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.nav-side-left{left:6px}.nav-side-right{right:6px}
+.nav-arrow{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,0.35);background:rgba(58,70,71,0.6);display:flex;align-items:center;justify-content:center;font-size:15px;color:rgba(255,255,255,0.7);transition:all .2s;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.nav-arrow:hover{background:rgba(254,199,61,0.85);border-color:#FEC73D;color:#3a4647}
+.nav-counter{position:absolute;top:10px;right:14px;z-index:20;font-size:11px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:.5px}
+.progress-bar{position:absolute;bottom:0;left:0;height:3px;background:#FEC73D;z-index:20;transition:width .3s}
+</style>
+</head>
+<body>
+<div class="frame" id="frame">
+<div class="swiper" id="swiper"><div class="swiper-wrapper">
+
+<!-- ===== INTRO ===== -->
+<div class="swiper-slide"><div class="slide th-i">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">Три метода</div><div class="s-title">Сценарии · Дерево решений · Причинно‑следственные связи</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Три метода из Приказа Минтруда № 926, <strong>адаптированные под психоэмоциональные и психофизические перегрузки</strong>. Каждый решает свою задачу:</p>
+<ul>
+<li><strong>Сценарии</strong> — «что если?»: моделируем траектории развития перегрузок</li>
+<li><strong>Дерево решений</strong> — «что делать?»: сравниваем варианты介入 и выбираем оптимальный</li>
+<li><strong>Причинно‑следственные связи</strong> — «почему случилось?»: выявляем фактические причины через диаграмму Исикавы или древовидную схему</li>
+</ul>
+<p>Методы дополняют друг друга: сценарии задают контекст, дерево решений выбирает меру, причинно‑следственный анализ проверяет достаточность барьеров.</p>
+<div class="s-gost">ГОСТ Р 58771‑2019: Б.2.5 (сценарии), Б.2.3 (дерево решений), Б.5.7 (причинно‑следственные связи) — упомянуты в ГОСТ, рекомендованы Приказом №926</div>
+</div>
+<div class="s-result"><div class="s-result-label">Нормативная база</div><div class="s-result-text">Приказ Минтруда № 926, п. 49–48 · Прил. 5, 13</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 46–56</span></div>
+</div></div>
+
+<!-- ===== СЦЕНАРИЙ 1 ===== -->
+<div class="swiper-slide"><div class="slide th-s">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">Сценарии · 1</div><div class="s-title">Сценарии перегрузок: как моделировать</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>В классическом методе сценарии описывают «лучший / ожидаемый / худший» случаи для оборудования. При перегрузках сценарии строятся по <strong>траекториям нарастания напряжения</strong>:</p>
+<ul>
+<li><strong>Базовый</strong> — рабочая нагрузка в пределах нормы, ресурсы достаточны, ошибки единичны</li>
+<li><strong>Нарастающий</strong> — хронический дедлайн‑стресс + ночные смены; вероятность ошибок растёт, но барьеры ещё срабатывают</li>
+<li><strong>Критический</strong> — комбинированная перегрузка + отказ барьеров: наставник заболел, инструкция не обновлена, работник на 12‑м часу смены</li>
+<li><strong>Катастрофический</strong> — полная потеря контроля: выгорание + конфликт + отсутствие поддержки → систематические нарушения → инцидент</li>
+</ul>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">4 сценария нарастания перегрузки с описанием состояния работника, среды и вероятности ошибки для каждого уровня</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 49–52, прил. 5</span></div>
+</div></div>
+
+<!-- ===== СЦЕНАРИЙ 2 ===== -->
+<div class="swiper-slide"><div class="slide th-s">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">Сценарии · 2</div><div class="s-title">Оценка вероятности и последствий по сценариям</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Каждому сценарию присваиваются два показателя из шкал Приложения № 13:</p>
+<ul>
+<li><strong>Вероятность перехода</strong> к данному сценарию — насколько вероятно, что ситуация разовьётся именно по этой траектории (с учётом барьеров)</li>
+<li><strong>Тяжесть последствий</strong> — ущерб для здоровья работника и безопасности процесса в данном сценарии</li>
+</ul>
+<p><strong>Ключевой вопрос:</strong> что ускоряет переход от базового к критическому? Это <strong>триггеры перегрузки</strong> — внезапное увеличение объёма, отмена выходных, смена руководства, конфликт в коллективе.</p>
+<p>Для каждого триггера: как часто он возникает (вероятность) и какой скачок ошибки вызывает (прирост вероятности ошибки работника).</p>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Таблица сценариев: вероятность перехода × тяжесть = уровень риска; перечень триггеров с оценкой вклада в переход</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>прил. 13</span></div>
+</div></div>
+
+<!-- ===== СЦЕНАРИЙ 3 ===== -->
+<div class="swiper-slide"><div class="slide th-s">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">Сценарии · 3</div><div class="s-title">Управление на основе сценариев</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Сценарии указывают <strong>точки介入</strong> — моменты, где вмешательство прерывает переход к более тяжёлой траектории:</p>
+<ul>
+<li><strong>Базовый → Нарастающий:</strong> контроль рабочей нагрузки, баланс дедлайнов, резерв времени</li>
+<li><strong>Нарастающий → Критический:</strong> проверка состояния барьеров (наставник? инструкция актуальна?), ограничение сверхурочных, мониторинг выгорания</li>
+<li><strong>Критический → Катастрофический:</strong> немедленное снятие работника с задачи, привлечение дублёра, приостановка работ</li>
+</ul>
+<p>Сценарии <strong>обновляются</strong> при изменении условий: новый проект, реорганизация, сезонная нагрузка. Раз в квартал — ревизия актуальности.</p>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Карта точек介入 с мерами для каждой границы перехода; план обновления сценариев</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 49–52, 87–93</span></div>
+</div></div>
+
+<!-- ===== ДЕРЕВО РЕШЕНИЙ 1 ===== -->
+<div class="swiper-slide"><div class="slide th-d">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">Дерево решений · 1</div><div class="s-title">Структура дерева для выбора мер защиты</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Классическое дерево решений моделирует выборы и исходы. При перегрузках каждый <strong>узел выбора</strong> — управленческое решение о мере защиты, а ветви — возможные результаты:</p>
+<ul>
+<li><strong>Корневой узел:</strong> «работник подвержен перегрузке X»</li>
+<li><strong>Узел 1:</strong> внедрить ли организационную меру? (да / нет)</li>
+<li><strong>Узел 2:</strong> если да — достаточно ли одной меры? (да / нет)</li>
+<li><strong>Узел 3:</strong> если нет — добавить ли поддержку? (наставник / тренинг / СИЗ психозащиты)</li>
+</ul>
+<p>Каждая ветвь заканчивается <strong>исходом</strong> с вероятностью и ущербом. Дерево позволяет количественно сравнить стратегии защиты и выбрать оптимальную.</p>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Диаграмма дерева решений с узлами介入, ветвями исходов и оценкой (вероятность × ущерб) для каждого пути</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 53–56</span></div>
+</div></div>
+
+<!-- ===== ДЕРЕВО РЕШЕНИЙ 2 ===== -->
+<div class="swiper-slide"><div class="slide th-d">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">Дерево решений · 2</div><div class="s-title">Ожидаемая ценность мер защиты</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Для каждой ветви рассчитывается <strong>ожидаемый ущерб</strong> (Expected Loss): вероятность исхода × тяжесть. Затем — <strong>ожидаемая ценность介入</strong> (EVI): разница между ущербом без меры и с мерой минус затраты на меру.</p>
+<p><strong>Пример:</strong></p>
+<ul>
+<li>Без介入: вероятность ошибки 0.3 × тяжесть 10 = ожидаемый ущерб 3.0</li>
+<li>Организационная мера (затраты 1.2): вероятность снижается до 0.1 → ущерб 1.0. EVI = 3.0 − 1.0 − 1.2 = <strong>+0.8</strong></li>
+<li>Обучение + наставник (затраты 2.5): вероятность 0.05 → ущерб 0.5. EVI = 3.0 − 0.5 − 2.5 = <strong>0.0</strong></li>
+</ul>
+<p>Выбирается стратегия с максимальным EVI. Если EVI ≤ 0 — Intervention не окупается и риск принимается.</p>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Количественное сравнение стратегий: EVI каждой меры; рекомендуемая стратегия с максимальным EVI</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 53–56, 78–86</span></div>
+</div></div>
+
+<!-- ===== ДЕРЕВО РЕШЕНИЙ 3 ===== -->
+<div class="swiper-slide"><div class="slide th-d">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">Дерево решений · 3</div><div class="s-title">Комбинированные меры и чувствительность</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Для комбинированных перегрузок дерево учитывает <strong>эффект взаимодействия</strong>: одна мера может не дать эффекта без другой.</p>
+<ul>
+<li><strong>Только график</strong> (снизили сверхурочные, но конфликт остался) → вероятность ошибки снижается на 20%, не на 50%</li>
+<li><strong>График + тренинг по конфликтам</strong> → снижение на 50% — меры работают синергетически</li>
+</ul>
+<p><strong>Анализ чувствительности:</strong> как изменится EVI, если вероятность перегрузки завышена или занижена на 20%? Если при пессимистичной оценке EVI остаётся положительным — мера устойчива.</p>
+<p>Дерево показывает, когда <strong>дешёвая мера лучше дорогой</strong>: ограничение сверхурочных может дать больший EVI, чем дорогостоящее обучение, если проблема в графике, а не в компетенциях.</p>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Рекомендуемая комбинация мер с учётом синергии; устойчивость решения при вариации исходных данных</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 53–56, 89</span></div>
+</div></div>
+
+<!-- ===== ПРИЧИННО-СЛЕДСТВЕННЫЕ 1 ===== -->
+<div class="swiper-slide"><div class="slide th-k">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">Причинно‑следственные связи · 1</div><div class="s-title">Два формата: Исикава и древовидная схема</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Метод идентифицирует <strong>фактические причины</strong> нежелательных событий и представляется в двух форматах:</p>
+<p><span class="s-tag">Диаграмма Исикавы</span>«рыбий скелет»: голова — нежелательное событие (инцидент при перегрузке), кости — категории причин. При перегрузках категории: «условия труда», «организация процесса», «человеческий фактор», «управление», «социальная среда», «физические факторы».</p>
+<p><span class="s-tag">Древовидная схема</span>сочетает логику <strong>дерева отказов</strong> (от события к причинам, сверху вниз) и <strong>дерева событий</strong> (от события к последствиям, сверху вниз). Дерево отказов и дерево событий как самостоятельные методы описаны в ГОСТ Р 58771‑2019, но Приказом №926 отдельно не рекомендованы — они входят в состав данного метода.</p>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Диаграмма Исикавы или древовидная схема: от инцидента при перегрузке к причинам и последствиям</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 46–48</span></div>
+</div></div>
+
+<!-- ===== ПРИЧИННО-СЛЕДСТВЕННЫЕ 2 ===== -->
+<div class="swiper-slide"><div class="slide th-k">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">Причинно‑следственные связи · 2</div><div class="s-title">Диаграмма Исикавы для перегрузок</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>«Голова рыбы» — инцидент: «работник допустил критическую ошибку на фоне перегрузки». Кости — шесть категорий причин:</p>
+<ul>
+<li><strong>Условия труда:</strong> 12‑часовая смена, плохое освещение, шум, неудобное рабочее место</li>
+<li><strong>Организация процесса:</strong> нереальные дедлайны, отсутствие регламентированных перерывов, хаотичная смена приоритетов</li>
+<li><strong>Человеческий фактор:</strong> усталость, монотония, недостаток квалификации, выгорание</li>
+<li><strong>Управление:</strong> отсутствие наставника, нет обратной связи, неясность ответственности</li>
+<li><strong>Социальная среда:</strong> конфликт в коллективе, буллинг, социальная изоляция</li>
+<li><strong>Физические факторы:</strong> воздействие шума, вибрации, температуры, химических веществ</li>
+</ul>
+<p>Каждая кость детализируется: «усталость» → «12‑часовая смена» → «третья ночная подряд».</p>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Диаграмма Исикавы: все фактические причины сгруппированы по категориям; видны корневые причины в каждой категории</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 46–48, прил. 5</span></div>
+</div></div>
+
+<!-- ===== ПРИЧИННО-СЛЕДСТВЕННЫЕ 3 ===== -->
+<div class="swiper-slide"><div class="slide th-k">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">Причинно‑следственные связи · 3</div><div class="s-title">Древовидная схема: логика И / ИЛИ</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Древовидная схема сочетает два направления анализа:</p>
+<p><span class="s-tag">Дерево причин</span>(аналог дерева отказов): от головного события вниз к причинам через логические операторы:</p>
+<ul>
+<li><strong>ИЛИ</strong> — ошибка возникает, если хотя бы один фактор перегрузки достиг критического уровня. Вероятности складываются.</li>
+<li><strong>И</strong> — ошибка требует одновременного совпадения факторов. Вероятности перемножаются — значит, барьер резко снижает итог.</li>
+</ul>
+<p><span class="s-tag">Дерево последствий</span>(аналог дерева событий): от головного события вниз к возможным исходам через барьеры. Если барьер работает — путь блокирован.</p>
+<p>Это позволяет определить <strong>критичные барьеры</strong>: удаление какого мероприятия наиболее резко повышает вероятность инцидента.</p>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Древовидная схема: причины (с вентилями И/ИЛИ) слева + последствия (с барьерами) справа; карта критичности барьеров</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 46–48</span></div>
+</div></div>
+
+<!-- ===== ПРИЧИННО-СЛЕДСТВЕННЫЕ 4 ===== -->
+<div class="swiper-slide"><div class="slide th-k">
+<div class="slide-accent-top"></div><div class="slide-accent-left"></div>
+<div class="s-header"><div class="s-num">Причинно‑следственные связи · 4</div><div class="s-title">Интеграция с другими методами</div></div>
+<hr class="s-divider">
+<div class="s-body">
+<p>Причинно‑следственный анализ не используется изолированно — он <strong>получает входные данные</strong> и <strong>поставляет данные</strong> дальше:</p>
+<ul>
+<li>от <strong>сценариев</strong> — вероятности базовых событий для каждого уровня перегрузки (базовый / нарастающий / критический)</li>
+<li>от <strong>анализа человеческого фактора</strong> — вероятности ошибок по типам (невнимание, память, решение, нарушение)</li>
+<li>в <strong>дерево решений</strong> — вероятность инцидента как вход для расчёта EVI мер защиты</li>
+<li>в <strong>LOPA</strong> — информация о барьерах и их критичности для анализа уровней защиты</li>
+</ul>
+<p>После реализации мер — <strong>повторный анализ</strong> (п. 91–93): замена вероятностей на новые, пересчёт, подтверждение снижения риска. Если Исикава показывает новые причины — добавляются в реестр.</p>
+<div class="s-gost">Дерево отказов (FTA, ГОСТ Б.3.1) и дерево событий (ETA, ГОСТ Б.3.2) описаны в ГОСТ Р 58771‑2019, но отдельно Приказом №926 не рекомендованы — они входят в состав данного метода</div>
+</div>
+<div class="s-result"><div class="s-result-label">Результат</div><div class="s-result-text">Интегрированная модель: причинно‑следственный анализ опирается на сценарии и HRA, питает дерево решений и LOPA; протокол повторной оценки</div></div>
+<div class="s-footer"><span>Приказ Минтруда № 926</span><span>п. 46–48, 57–59, 72–75, 91–93</span></div>
+</div></div>
+
+</div></div>
+<div class="nav-side nav-side-left" id="prevBtn"><div class="nav-arrow">&#8249;</div></div>
+<div class="nav-side nav-side-right" id="nextBtn"><div class="nav-arrow">&#8250;</div></div>
+<div class="nav-counter" id="counter">1 / 11</div>
+<div class="progress-bar" id="progressBar" style="width:9.09%"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+(function(){
+const s=new Swiper('#swiper',{direction:'horizontal',slidesPerView:1,speed:350,on:{slideChange:u}});
+document.getElementById('prevBtn').addEventListener('click',()=>s.slidePrev());
+document.getElementById('nextBtn').addEventListener('click',()=>s.slideNext());
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')s.slideNext();if(e.key==='ArrowLeft')s.slidePrev();});
+function u(){const i=s.activeIndex+1,t=s.slides.length;document.getElementById('counter').textContent=i+' / '+t;document.getElementById('progressBar').style.width=(i/t*100)+'%';}
+function r(){const f=document.getElementById('frame'),fw=f.clientWidth,fh=f.clientHeight,sc=Math.min(fw/560,fh/500);document.querySelectorAll('.slide').forEach(sl=>{sl.style.transform='scale('+sc+')';sl.style.transformOrigin='center center';});}
+window.addEventListener('resize',r);r();
+})();
+</script>
+</body>
+</html>
